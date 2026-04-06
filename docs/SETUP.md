@@ -2,8 +2,9 @@
 
 ## Prerequisites
 
-- [Claude Code](https://claude.ai/code) installed and configured
+- [Gemini CLI](https://github.com/google-gemini/gemini-cli) installed (`npm install -g @google/gemini-cli`)
 - Node.js 18+ (for PDF generation and utility scripts)
+- Google Chrome (for [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) browser automation)
 - (Optional) Go 1.21+ (for the dashboard TUI)
 
 ## Quick Start (5 steps)
@@ -11,10 +12,9 @@
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/santifer/career-ops.git
-cd career-ops
+git clone https://github.com/YOUR-USER/career-ops-gemini.git
+cd career-ops-gemini
 npm install
-npx playwright install chromium   # Required for PDF generation
 ```
 
 ### 2. Configure your profile
@@ -44,10 +44,10 @@ Edit `portals.yml`:
 
 ### 5. Start using
 
-Open Claude Code in this directory:
+Open Gemini CLI in this directory:
 
 ```bash
-claude
+gemini
 ```
 
 Then paste a job offer URL or description. Career-ops will automatically evaluate it, generate a report, create a tailored PDF, and track it.
@@ -57,12 +57,12 @@ Then paste a job offer URL or description. Career-ops will automatically evaluat
 | Action | How |
 |--------|-----|
 | Evaluate an offer | Paste a URL or JD text |
-| Search for offers | `/career-ops scan` |
-| Process pending URLs | `/career-ops pipeline` |
-| Generate a PDF | `/career-ops pdf` |
-| Batch evaluate | `/career-ops batch` |
-| Check tracker status | `/career-ops tracker` |
-| Fill application form | `/career-ops apply` |
+| Search for offers | `/career-ops:scan` |
+| Process pending URLs | `/career-ops:pipeline` |
+| Generate a PDF | `/career-ops:pdf` |
+| Batch evaluate | `/career-ops:batch` |
+| Check tracker status | `/career-ops:tracker` |
+| Fill application form | `/career-ops:apply` |
 
 ## Verify Setup
 

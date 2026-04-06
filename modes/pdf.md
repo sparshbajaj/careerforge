@@ -22,6 +22,8 @@
 
 ## Reglas ATS (parseo limpio)
 
+- **Strict One-Page Limit**: All CVs MUST fit on a single page. If content exceeds one page, prioritize the most relevant experience and projects for the specific JD.
+- **No Visa Status**: Never include visa status, work permits, or citizenship information in the CV (header, contact, or body) unless explicitly requested by the user for a specific application.
 - Layout single-column (sin sidebars, sin columnas paralelas)
 - Headers estándar: "Professional Summary", "Work Experience", "Education", "Skills", "Certifications", "Projects"
 - Sin texto en imágenes/SVGs

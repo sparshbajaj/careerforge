@@ -170,10 +170,8 @@ If the candidate has a live demo/dashboard (check profile.yml), offer access in 
 
 | Tool | Use |
 |------|-----|
-| WebSearch | Comp research, trends, company culture, LinkedIn contacts, fallback for JDs |
-| WebFetch | Fallback for extracting JDs from static pages |
-| Playwright | Verify if offers are still active (browser_navigate + browser_snapshot), extract JDs from SPAs. **CRITICAL: NEVER launch 2+ agents with Playwright in parallel -- they share a single browser instance.** |
-| Read | cv.md, article-digest.md, cv-template.html |
-| Write | Temporary HTML for PDF, applications.md, reports .md |
-| Edit | Update tracker |
-| Bash | `node generate-pdf.mjs` |
+| web-search | Comp research, trends, company culture, LinkedIn contacts, broad job discovery |
+| web-fetch | Extract JDs from static URLs, verify offers, read company pages. Fallback when Chrome DevTools MCP is unavailable |
+| Chrome DevTools MCP | Navigate portals (`navigate_page`), read page content (`take_snapshot`), fill forms (`fill`, `fill_form`), click buttons (`click`), interact with SPAs. Preferred for scanning and applying |
+| shell | Run Node.js scripts: `node generate-pdf.mjs`, `node merge-tracker.mjs`, etc. |
+| File I/O | Read cv.md, article-digest.md, cv-template.html; Write reports, tracker TSVs, temp HTML |

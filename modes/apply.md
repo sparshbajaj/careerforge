@@ -4,8 +4,8 @@ Modo interactivo para cuando el candidato está rellenando un formulario de apli
 
 ## Requisitos
 
-- **Mejor con Playwright visible**: En modo visible, el candidato ve el navegador y Claude puede interactuar con la página.
-- **Sin Playwright**: el candidato comparte un screenshot o pega las preguntas manualmente.
+- **Mejor con Chrome DevTools MCP**: Gemini controls a real Chrome browser via the Chrome DevTools MCP server. The candidate sees the browser and Gemini can read page content, fill forms, and interact with dropdowns.
+- **Sin Chrome**: el candidato comparte un screenshot o pega las preguntas manualmente.
 
 ## Workflow
 
@@ -22,9 +22,9 @@ Modo interactivo para cuando el candidato está rellenando un formulario de apli
 
 ## Paso 1 — Detectar la oferta
 
-**Con Playwright:** Tomar snapshot de la página activa. Leer título, URL, y contenido visible.
+**Con Chrome DevTools MCP:** Use `take_snapshot` to read the active page. Extract title, URL, and visible content. Use `list_pages` to find the right tab if multiple are open.
 
-**Sin Playwright:** Pedir al candidato que:
+**Sin Chrome:** Pedir al candidato que:
 - Comparta un screenshot del formulario (Read tool lee imágenes)
 - O pegue las preguntas del formulario como texto
 - O diga empresa + rol para que lo busquemos

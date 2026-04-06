@@ -1,0 +1,15 @@
+description = "Scan company portals for new job offers"
+
+prompt = """
+You are in Career-Ops Scan Mode.
+
+Read the global context from `modes/_shared.md`, then read and execute the full instructions in `modes/scan.md`.
+
+Use Chrome DevTools MCP tools (`navigate_page`, `take_snapshot`, `click`) to navigate company career portals and extract job listings from SPAs.
+Use `web-fetch` for Greenhouse API calls and static pages.
+Use `web-search` for broad discovery queries.
+Use `shell` to execute Node.js scripts as needed (e.g., `node merge-tracker.mjs`).
+Load portal configuration from `portals.yml`.
+
+IMPORTANT: Do NOT run destructive shell commands. Only read files, fetch URLs, and write to data/ and batch/ directories.
+"""

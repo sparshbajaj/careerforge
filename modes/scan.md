@@ -23,13 +23,14 @@ Leer `portals.yml` que contiene:
 
 ## Estrategia de descubrimiento (3 niveles)
 
-### Nivel 1 — Playwright directo (PRINCIPAL)
+### Nivel 1 — Chrome DevTools MCP (PRINCIPAL)
 
-**Para cada empresa en `tracked_companies`:** Navegar a su `careers_url` con Playwright (`browser_navigate` + `browser_snapshot`), leer TODOS los job listings visibles, y extraer título + URL de cada uno. Este es el método más fiable porque:
-- Ve la página en tiempo real (no resultados cacheados de Google)
-- Funciona con SPAs (Ashby, Lever, Workday)
+**Para cada empresa en `tracked_companies`:** Navegar a su `careers_url` usando Chrome DevTools MCP tools (`navigate_page` + `take_snapshot`), leer TODOS los job listings visibles, y extraer título + URL de cada uno. Este es el método más fiable porque:
+- Ve la página en tiempo real en un real Chrome browser (no resultados cacheados de Google)
+- Funciona con SPAs (Ashby, Lever, Workday) — full JS rendering
 - Detecta ofertas nuevas al instante
 - No depende de la indexación de Google
+- Can interact with dropdowns, filters, and pagination via `click` and `fill` tools
 
 **Cada empresa DEBE tener `careers_url` en portals.yml.** Si no la tiene, buscarla una vez, guardarla, y usar en futuros scans.
 
@@ -42,9 +43,9 @@ Para empresas con Greenhouse, la API JSON (`boards-api.greenhouse.io/v1/boards/{
 Los `search_queries` con `site:` filters cubren portales de forma transversal (todos los Ashby, todos los Greenhouse, etc.). Útil para descubrir empresas NUEVAS que aún no están en `tracked_companies`, pero los resultados pueden estar desfasados.
 
 **Prioridad de ejecución:**
-1. Nivel 1: Playwright → todas las `tracked_companies` con `careers_url`
+1. Nivel 1: Chrome DevTools MCP → todas las `tracked_companies` con `careers_url`
 2. Nivel 2: API → todas las `tracked_companies` con `api:`
-3. Nivel 3: WebSearch → todos los `search_queries` con `enabled: true`
+3. Nivel 3: web-search → todos los `search_queries` con `enabled: true`
 
 Los niveles son aditivos — se ejecutan todos, los resultados se mezclan y deduplicar.
 
@@ -54,25 +55,25 @@ Los niveles son aditivos — se ejecutan todos, los resultados se mezclan y dedu
 2. **Leer historial**: `data/scan-history.tsv` → URLs ya vistas
 3. **Leer dedup sources**: `data/applications.md` + `data/pipeline.md`
 
-4. **Nivel 1 — Playwright scan** (paralelo en batches de 3-5):
+4. **Nivel 1 — Chrome DevTools MCP scan** (one at a time — single browser instance):
    Para cada empresa en `tracked_companies` con `enabled: true` y `careers_url` definida:
-   a. `browser_navigate` a la `careers_url`
-   b. `browser_snapshot` para leer todos los job listings
-   c. Si la página tiene filtros/departamentos, navegar las secciones relevantes
+   a. `navigate_page` a la `careers_url`
+   b. `take_snapshot` para leer todos los job listings
+   c. Si la página tiene filtros/departamentos, usar `click` para navegar las secciones relevantes
    d. Para cada job listing extraer: `{title, url, company}`
-   e. Si la página pagina resultados, navegar páginas adicionales
+   e. Si la página pagina resultados, usar `click` para navegar páginas adicionales
    f. Acumular en lista de candidatos
    g. Si `careers_url` falla (404, redirect), intentar `scan_query` como fallback y anotar para actualizar la URL
 
-5. **Nivel 2 — Greenhouse APIs** (paralelo):
+5. **Nivel 2 — Greenhouse APIs** (via web-fetch):
    Para cada empresa en `tracked_companies` con `api:` definida y `enabled: true`:
-   a. WebFetch de la URL de API → JSON con lista de jobs
+   a. web-fetch de la URL de API → JSON con lista de jobs
    b. Para cada job extraer: `{title, url, company}`
    c. Acumular en lista de candidatos (dedup con Nivel 1)
 
-6. **Nivel 3 — WebSearch queries** (paralelo si posible):
+6. **Nivel 3 — web-search queries**:
    Para cada query en `search_queries` con `enabled: true`:
-   a. Ejecutar WebSearch con el `query` definido
+   a. Ejecutar web-search con el `query` definido
    b. De cada resultado extraer: `{title, url, company}`
       - **title**: del título del resultado (antes del " @ " o " | ")
       - **url**: URL del resultado

@@ -6,11 +6,11 @@ This system was built and used by [santifer](https://santifer.io) to evaluate 74
 
 The portfolio that goes with this system is also open source: [cv-santiago](https://github.com/santifer/cv-santiago).
 
-**It will work out of the box, but it's designed to be made yours.** If the archetypes don't match your career, the modes are in the wrong language, or the scoring doesn't fit your priorities -- just ask. You (Claude) can edit any file in this system. The user says "change the archetypes to data engineering roles" and you do it. That's the whole point.
+**It will work out of the box, but it's designed to be made yours.** If the archetypes don't match your career, the modes are in the wrong language, or the scoring doesn't fit your priorities -- just ask. You (Gemini) can edit any file in this system. The user says "change the archetypes to data engineering roles" and you do it. That's the whole point.
 
 ## What is career-ops
 
-AI-powered job search automation built on Claude Code: pipeline tracking, offer evaluation, CV generation, portal scanning, batch processing.
+AI-powered job search automation built on Gemini CLI: pipeline tracking, offer evaluation, CV generation, portal scanning, batch processing.
 
 ### Main Files
 
@@ -78,8 +78,8 @@ If `data/applications.md` doesn't exist, create it:
 Once all files exist, confirm:
 > "You're all set! You can now:
 > - Paste a job URL to evaluate it
-> - Run `/career-ops scan` to search portals
-> - Run `/career-ops` to see all commands
+> - Run `/career-ops:scan` to search portals
+> - Type `/career-ops` to see all commands
 >
 > Everything is customizable — just ask me to change anything.
 >
@@ -88,11 +88,11 @@ Once all files exist, confirm:
 Then suggest automation:
 > "Want me to scan for new offers automatically? I can set up a recurring scan every few days so you don't miss anything. Just say 'scan every 3 days' and I'll configure it."
 
-If the user accepts, use the `/loop` or `/schedule` skill (if available) to set up a recurring `/career-ops scan`. If those aren't available, suggest adding a cron job or remind them to run `/career-ops scan` periodically.
+If the user accepts, suggest adding a cron job or remind them to run `/career-ops:scan` periodically.
 
 ### Personalization
 
-This system is designed to be customized by YOU (Claude). When the user asks you to change archetypes, translate modes, adjust scoring, add companies, or modify negotiation scripts -- do it directly. You read the same files you use, so you know exactly what to edit.
+This system is designed to be customized by YOU (Gemini). When the user asks you to change archetypes, translate modes, adjust scoring, add companies, or modify negotiation scripts -- do it directly. You read the same files you use, so you know exactly what to edit.
 
 **Common customization requests:**
 - "Change the archetypes to [backend/frontend/data/devops] roles" → edit `modes/_shared.md`
@@ -102,23 +102,25 @@ This system is designed to be customized by YOU (Claude). When the user asks you
 - "Change the CV template design" → edit `templates/cv-template.html`
 - "Adjust the scoring weights" → edit `modes/_shared.md` and `batch/batch-prompt.md`
 
-### Skill Modes
+### Command Modes
 
-| If the user... | Mode |
-|----------------|------|
-| Pastes JD or URL | auto-pipeline (evaluate + report + PDF + tracker) |
-| Asks to evaluate offer | `oferta` |
-| Asks to compare offers | `ofertas` |
-| Wants LinkedIn outreach | `contacto` |
-| Asks for company research | `deep` |
-| Wants to generate CV/PDF | `pdf` |
-| Evaluates a course/cert | `training` |
-| Evaluates portfolio project | `project` |
-| Asks about application status | `tracker` |
-| Fills out application form | `apply` |
-| Searches for new offers | `scan` |
-| Processes pending URLs | `pipeline` |
-| Batch processes offers | `batch` |
+Commands use Gemini CLI's `/group:command` syntax. Each maps to a `.toml` file in `.gemini/commands/career-ops/`.
+
+| If the user... | Command |
+|----------------|---------|
+| Pastes JD or URL | `/career-ops:auto-pipeline` (evaluate + report + PDF + tracker) |
+| Asks to evaluate offer | `/career-ops:oferta` |
+| Asks to compare offers | `/career-ops:ofertas` |
+| Wants LinkedIn outreach | `/career-ops:contacto` |
+| Asks for company research | `/career-ops:deep` |
+| Wants to generate CV/PDF | `/career-ops:pdf` |
+| Evaluates a course/cert | `/career-ops:training` |
+| Evaluates portfolio project | `/career-ops:project` |
+| Asks about application status | `/career-ops:tracker` |
+| Fills out application form | `/career-ops:apply` |
+| Searches for new offers | `/career-ops:scan` |
+| Processes pending URLs | `/career-ops:pipeline` |
+| Batch processes offers | `/career-ops:batch` |
 
 ### CV Source of Truth
 
@@ -141,18 +143,41 @@ This system is designed to be customized by YOU (Claude). When the user asks you
 
 ## Offer Verification -- MANDATORY
 
-**NEVER trust WebSearch/WebFetch to verify if an offer is still active.** ALWAYS use Playwright:
-1. `browser_navigate` to the URL
-2. `browser_snapshot` to read content
-3. Only footer/navbar without JD = closed. Title + description + Apply = active.
+**Use Chrome DevTools MCP to verify offers in a real browser.** This is the most reliable method:
+1. `navigate_page` to the URL
+2. `take_snapshot` to read the page content
+3. Only footer/navbar without JD content = closed. Title + description + Apply = active.
+4. 404 or redirect to generic careers page = closed.
 
-**Exception for batch workers (`claude -p`):** Playwright is not available in headless pipe mode. Use WebFetch as fallback and mark the report header with `**Verification:** unconfirmed (batch mode)`. The user can verify manually later.
+**Fallback:** If Chrome DevTools MCP is unavailable, use `web-fetch` to check the URL.
+
+**For batch workers (`gemini --yolo`):** Use `web-fetch` and mark the report header with `**Verification:** unconfirmed (batch mode)` if uncertain. The user can verify manually later.
+
+---
+
+## Native Tool Optimization
+
+Gemini CLI provides built-in tools, and Chrome DevTools MCP adds real browser automation:
+
+| Tool | Use |
+|------|-----|
+| `web-search` | Comp research, trends, company culture, LinkedIn contacts, broad job discovery |
+| `web-fetch` | Extract JDs from URLs (static pages), verify offer status, read company pages |
+| Chrome DevTools MCP | Navigate portals, scan job listings, fill application forms, verify offers in a real Chrome browser (SPAs, JS-heavy pages) |
+| `shell` | Run Node.js scripts (`node generate-pdf.mjs`, `node merge-tracker.mjs`) |
+| File I/O | Read cv.md, article-digest.md, cv-template.html; Write reports, tracker TSVs |
+
+**When to use Chrome DevTools MCP vs web-fetch:**
+- **Chrome DevTools MCP**: SPA career pages (Ashby, Lever, Workday), form filling, pages requiring JS rendering, offer verification
+- **web-fetch**: Static pages, APIs, quick URL checks, batch worker mode (no browser available)
+
+The Chrome DevTools MCP server is configured in `.mcp.json` and starts automatically when Gemini CLI calls a browser tool.
 
 ---
 
 ## Stack and Conventions
 
-- Node.js (mjs modules), Playwright (PDF + scraping), YAML (config), HTML/CSS (template), Markdown (data)
+- Node.js (mjs modules), Playwright (PDF generation), YAML (config), HTML/CSS (template), Markdown (data)
 - Scripts in `.mjs`, configuration in YAML
 - Output in `output/` (gitignored), Reports in `reports/`
 - JDs in `jds/` (referenced as `local:jds/{file}` in pipeline.md)

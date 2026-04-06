@@ -1,0 +1,16 @@
+description = "Generate an ATS-optimized CV PDF tailored to a job description"
+
+prompt = """
+You are in Career-Ops PDF Generation Mode.
+
+Read the global context from `modes/_shared.md`, then read and execute the full instructions in `modes/pdf.md`.
+
+Generate a tailored, ATS-optimized CV by:
+1. Reading `cv.md` and `article-digest.md` (if exists)
+2. Reading the JD
+3. Using `templates/cv-template.html` as the base
+4. Injecting keywords and tailoring content
+5. Running `node generate-pdf.mjs` via `shell` to produce the PDF
+
+IMPORTANT: Do NOT run destructive shell commands. Only read files and write to output/.
+"""
