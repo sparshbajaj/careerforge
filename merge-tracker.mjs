@@ -56,7 +56,7 @@ function validateStatus(status) {
   if (aliases[lower]) return aliases[lower];
 
   // DUPLICADO/Repost → Descartado
-  if (/^(duplicado|dup|repost)/i.test(lower)) return 'Descartado';
+  if (/^(duplicado|dup|repost)/i.test(lower)) return 'Discarded';
 
   console.warn(`⚠️  Non-canonical status "${status}" → defaulting to "Evaluada"`);
   return 'Evaluada';

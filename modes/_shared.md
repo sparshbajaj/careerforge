@@ -24,9 +24,31 @@
 
 ---
 
+## Automatic Environment Check (CRITICAL — runs silently every session)
+
+**At the start of EVERY session, new conversation, or when a link/URL is provided, you MUST silently verify the environment is ready.** Do NOT ask the user if files exist — check them yourself. This check must complete before any other action.
+
+### Check Sequence (run automatically, do NOT prompt user)
+
+1. **Read `cv.md`** — If it exists, load it silently. If missing, enter Onboarding Mode.
+2. **Read `config/profile.yml`** — If it exists, load candidate identity. If missing, copy from `config/profile.example.yml` and ask user to fill in details.
+3. **Read `portals.yml`** — If it exists, load it. If missing, copy from `templates/portals.example.yml`.
+4. **Read `data/applications.md`** — If it exists, load tracker. If missing, create with standard header.
+5. **Run `node cv-sync-check.mjs`** — If it reports warnings, notify the candidate before continuing.
+
+### Behavior Rules
+
+- **NEVER ask the user to provide cv.md or profile.yml if they already exist.** Just read them.
+- **NEVER say "I need your CV"** if cv.md is present in the project root.
+- **Load these files at the start of every session** — do not wait until an evaluation is requested.
+- **Cache in context**: Once loaded, keep cv.md and profile.yml contents in your working context for the entire session.
+- **If files change mid-session**: Re-read when the user says "I updated my CV" or similar.
+
+---
+
 ## North Star -- Target Roles
 
-The skill applies with EQUAL rigor to ALL target roles. None is primary or secondary -- any is a success if comp and growth are right:
+The skill applies with EQUAL rigor to ALL target roles. None is primary or secondary -- any is a success if compensation and growth are right:
 
 | Archetype | Thematic axes | What they buy |
 |-----------|---------------|---------------|
@@ -36,13 +58,9 @@ The skill applies with EQUAL rigor to ALL target roles. None is primary or secon
 | **AI Solutions Architect** | Hyperautomation, enterprise, integrations | Someone who designs end-to-end AI architectures |
 | **AI Forward Deployed Engineer** | Client-facing, fast delivery, prototyping | Someone who delivers AI solutions to clients fast |
 | **AI Transformation Lead** | Change management, adoption, org enablement | Someone who leads AI transformation in an org |
+| **AI/UX Designer / Product Builder** | Intelligent Agents, Conversational Design, Prototyping in code | Someone who bridges design and engineering for AI |
 
-<!-- [CUSTOMIZE] Edit the archetypes above to match YOUR target roles.
-     For example, if you're a backend engineer, replace with:
-     - Senior Backend Engineer
-     - Staff Platform Engineer
-     - Engineering Manager
-     etc. -->
+<!-- [CUSTOMIZE] Edit the archetypes above to match YOUR target roles. -->
 
 ### Adaptive Framing by Archetype
 
@@ -56,16 +74,9 @@ The skill applies with EQUAL rigor to ALL target roles. None is primary or secon
 | Solutions Architect | System design, integrations, enterprise-ready | article-digest.md + cv.md |
 | Forward Deployed Engineer | Fast delivery, client-facing, prototype to prod | cv.md + article-digest.md |
 | AI Transformation Lead | Change management, team enablement, adoption | cv.md + article-digest.md |
-
-<!-- [CUSTOMIZE] Map YOUR specific projects/articles to each archetype above -->
+| AI/UX Designer | Intelligent Agents, multi-turn interaction patterns, technical feasibility | cv.md + article-digest.md |
 
 ### Exit Narrative (use in ALL framings)
-
-<!-- [CUSTOMIZE] Replace with YOUR narrative. Examples:
-     - "Built and sold my SaaS after 5 years. Now focused on applied AI at scale."
-     - "Led engineering at a Series B startup through 10x growth. Now seeking my next challenge."
-     - "Transitioned from consulting to building product. Looking for high-ownership roles."
-     Read from config/profile.yml → narrative.exit_story -->
 
 Use the candidate's exit story from `config/profile.yml` to frame ALL content:
 - **In PDF Summaries:** Bridge from past to future -- "Now applying the same [skill] to [JD domain]."
@@ -77,37 +88,24 @@ Use the candidate's exit story from `config/profile.yml` to frame ALL content:
 
 Frame profile as **"Technical builder with real-world proof"** that adapts framing to the role:
 - For PM: "builder who reduces uncertainty with prototypes then productionizes with discipline"
-- For FDE: "builder who delivers fast with observability and metrics from day 1"
-- For SA: "builder who designs end-to-end systems with real integration experience"
-- For LLMOps: "builder who puts AI in production with closed-loop quality systems"
+- For Designer: "builder who ensures technical feasibility by prototyping with code and Figma API automation"
+- For Engineer: "builder who delivers fast with observability and metrics from day 1"
 
 Convert "builder" into a professional signal, not a "hobby maker". Real proof points make this credible.
 
 ### Portfolio as Proof Point (use in high-value applications)
 
-<!-- [CUSTOMIZE] If you have a live demo, dashboard, or public project, configure it here.
-     Example:
-     dashboard:
-       url: "https://yoursite.dev/demo"
-       password: "demo-2026"
-       when_to_share: "LLMOps, AI Platform, observability roles"
-     Read from config/profile.yml → narrative.proof_points and narrative.dashboard -->
-
 If the candidate has a live demo/dashboard (check profile.yml), offer access in applications for relevant roles.
 
-### Comp Intelligence
-
-<!-- [CUSTOMIZE] Research comp ranges for YOUR target roles and update these ranges -->
+### Compensation Intelligence
 
 **General guidance:**
 - Use WebSearch for current market data (Glassdoor, Levels.fyi, Blind)
-- Frame by role title, not by skills -- titles determine comp bands
+- Frame by role title, not by skills -- titles determine compensation bands
 - Contractor rates are typically 30-50% higher than employee base to account for benefits
-- Geographic arbitrage works for remote roles: lower CoL = better net
+- Geographic arbitrage works for remote roles: lower cost of living = better net
 
 ### Negotiation Scripts
-
-<!-- [CUSTOMIZE] Adapt these to your situation -->
 
 **Salary expectations (general framework):**
 > "Based on market data for this role, I'm targeting [RANGE from profile.yml]. I'm flexible on structure -- what matters is the total package and the opportunity."
@@ -119,8 +117,6 @@ If the candidate has a live demo/dashboard (check profile.yml), offer access in 
 > "I'm comparing with opportunities in the [higher range]. I'm drawn to [company] because of [reason]. Can we explore [target]?"
 
 ### Location Policy
-
-<!-- [CUSTOMIZE] Adapt to your situation. Read from config/profile.yml → location -->
 
 **In forms:**
 - Binary "can you be on-site?" questions: follow your actual availability from profile.yml
@@ -145,22 +141,22 @@ If the candidate has a live demo/dashboard (check profile.yml), offer access in 
 2. Modify cv.md or portfolio files
 3. Submit applications on behalf of the candidate
 4. Share phone number in generated messages
-5. Recommend comp below market rate
+5. Recommend compensation below market rate
 6. Generate a PDF without reading the JD first
 7. Use corporate-speak
 8. Ignore the tracker (every evaluated offer gets registered)
 
 ### ALWAYS
 
-0. **Cover letter:** If the form has an option to attach or write a cover letter, ALWAYS include one. Generate PDF with the same visual design as the CV. Content: JD quotes mapped to proof points, links to relevant case studies. 1 page max.
+0. **Mandatory Environment Check:** Silently verify `cv.md`, `config/profile.yml`, `portals.yml`, and `data/applications.md` exist at session start. Do NOT ask the user — just read them.
 1. Read cv.md and article-digest.md (if exists) before evaluating any offer
-1b. **First evaluation of each session:** Run `node cv-sync-check.mjs` with Bash. If it reports warnings, notify the candidate before continuing
-2. Detect the role archetype and adapt framing
-3. Cite exact lines from CV when matching
-4. Use WebSearch for comp and company data
-5. Register in tracker after evaluating
-6. Generate content in the language of the JD (EN default)
-7. Be direct and actionable -- no fluff
+1b. **First evaluation of each session:** Run `node cv-sync-check.mjs` with shell. If it reports warnings, notify the candidate before continuing.
+2. Detect the role archetype and adapt framing (favor "Product Builder" / "UI/UX Engineer" for Sparsh).
+3. Cite exact lines from CV when matching.
+4. Use WebSearch for compensation and company data.
+5. Register in tracker after evaluating.
+6. Generate ALL content in English. All modes, reports, evaluations, messages, and tracker entries MUST be in English.
+7. Be direct and actionable -- no fluff.
 8. When generating English text (PDF summaries, bullets, LinkedIn messages, STAR stories): native tech English, not translated. Short sentences, action verbs, no unnecessary passive voice.
 8b. **Case study URLs in PDF Professional Summary:** If the PDF mentions case studies or demos, URLs MUST appear in the first paragraph (Professional Summary). The recruiter may only read the summary. All URLs with `white-space: nowrap` in HTML.
 9. **Tracker additions as TSV** -- NEVER edit applications.md to add new entries. Write TSV in `batch/tracker-additions/` and `merge-tracker.mjs` handles the merge.

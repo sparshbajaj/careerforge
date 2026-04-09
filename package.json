@@ -1,6 +1,6 @@
 {
   "name": "career-ops",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "AI-powered job search pipeline built on Gemini CLI",
   "scripts": {
     "verify": "node verify-pipeline.mjs",
@@ -8,7 +8,8 @@
     "dedup": "node dedup-tracker.mjs",
     "merge": "node merge-tracker.mjs",
     "pdf": "node generate-pdf.mjs",
-    "sync-check": "node cv-sync-check.mjs"
+    "sync-check": "node cv-sync-check.mjs",
+    "dashboard": "cd webui && go run . --path .."
   },
   "keywords": ["ai", "job-search", "gemini-cli", "career", "automation"],
   "author": "Santiago Fernández de Valderrama <hi@santifer.io> (https://santifer.io)",

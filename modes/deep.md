@@ -1,47 +1,24 @@
-# Modo: deep — Deep Research Prompt
+# Mode: deep — Deep Company Research
 
-Genera un prompt estructurado para Perplexity/Gemini/ChatGPT con 6 ejes:
+Advanced research mode to prepare for interviews or high-stakes applications. Goes beyond the JD to understand company health, culture, and technical stack.
 
-```
-## Deep Research: [Empresa] — [Rol]
+## Research Areas
 
-Contexto: Estoy evaluando una candidatura para [rol] en [empresa]. Necesito información accionable para la entrevista.
+1. **Financial Health**: Funding rounds, recent news, layoffs, or massive hiring.
+2. **Product Roadmap**: Recent launches, public feature requests, keynote mentions.
+3. **Tech Stack**: Engineering blog posts, LinkedIn tech tags, Job board requirements.
+4. **Cultural "Vibe"**: Glassdoor reviews (filtered for recent), Founder interviews, social media presence.
+5. **Interview Loop**: Common questions reported on Glassdoor/Reddit for this specific company.
 
-### 1. Estrategia AI
-- ¿Qué productos/features usan AI/ML?
-- ¿Cuál es su stack de AI? (modelos, infra, tools)
-- ¿Tienen blog de engineering? ¿Qué publican?
-- ¿Qué papers o talks han dado sobre AI?
+## Workflow
 
-### 2. Movimientos recientes (últimos 6 meses)
-- ¿Contrataciones relevantes en AI/ML/product?
-- ¿Acquisitions o partnerships?
-- ¿Product launches o pivots?
-- ¿Rondas de funding o cambios de liderazgo?
+1. Use `web-search` for each area.
+2. Synthesize into a "Deep Dive" report.
+3. Append to the existing evaluation report in `reports/`.
 
-### 3. Cultura de engineering
-- ¿Cómo shipean? (cadencia de deploy, CI/CD)
-- ¿Mono-repo o multi-repo?
-- ¿Qué lenguajes/frameworks usan?
-- ¿Remote-first o office-first?
-- ¿Glassdoor/Blind reviews sobre eng culture?
+## Report Sections
 
-### 4. Retos probables
-- ¿Qué problemas de scaling tienen?
-- ¿Reliability, cost, latency challenges?
-- ¿Están migrando algo? (infra, models, platforms)
-- ¿Qué pain points menciona la gente en reviews?
-
-### 5. Competidores y diferenciación
-- ¿Quiénes son sus main competitors?
-- ¿Cuál es su moat/diferenciador?
-- ¿Cómo se posicionan vs competencia?
-
-### 6. Ángulo del candidato
-Dado mi perfil (read from cv.md and profile.yml for specific experience):
-- ¿Qué valor único aporto a este equipo?
-- ¿Qué proyectos míos son más relevantes?
-- ¿Qué historia debería contar en la entrevista?
-```
-
-Personalizar cada sección con el contexto específico de la oferta evaluada.
+- **The Bull Case**: Why this company is winning.
+- **The Bear Case**: Risks and red flags.
+- **"Insider" Keywords**: Terms they use internally (from blogs/interviews).
+- **Executive Summary**: 3 things to mention in an interview to sound like an insider.

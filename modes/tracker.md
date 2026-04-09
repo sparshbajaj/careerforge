@@ -1,23 +1,17 @@
-# Modo: tracker — Tracker de Aplicaciones
+# Mode: tracker — Application Status Triage
 
-Lee y muestra `data/applications.md`.
+View and update the status of current applications in `data/applications.md`.
 
-**Formato del tracker:**
-```markdown
-| # | Fecha | Empresa | Rol | Score | Estado | PDF | Report |
-```
+## Commands
 
-Estados posibles: `Evaluada` → `Aplicado` → `Respondido` → `Contacto` → `Entrevista` → `Oferta` / `Rechazada` / `Descartada` / `NO APLICAR`
+- **List**: Show recent applications and their current status.
+- **Update**: Change status of an entry (e.g., `Evaluated` → `Applied`).
+- **Health Check**: Run `node verify-pipeline.mjs` to check for broken links or inconsistent states.
+- **Reminders**: Identify applications that haven't responded in > 7 days.
 
-- `Aplicado` = el candidato envió su candidatura
-- `Respondido` = Un recruiter/empresa contactó y el candidato respondió (inbound)
-- `Contacto` = El candidato contactó proactivamente a alguien de la empresa (outbound, ej: LinkedIn power move)
+## Update Workflow
 
-Si el usuario pide actualizar un estado, editar la fila correspondiente.
-
-Mostrar también estadísticas:
-- Total de aplicaciones
-- Por estado
-- Score promedio
-- % con PDF generado
-- % con report generado
+1. User provides ID or Company.
+2. Ask for new status (use canonical states from `templates/states.yml`).
+3. Update `data/applications.md` and the corresponding report header.
+4. Suggest next mode (e.g., if status is `Interview`, suggest `deep` or `story-bank`).

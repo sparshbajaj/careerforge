@@ -3,12 +3,11 @@
 AI-powered job search pipeline built on [Google Gemini CLI](https://github.com/google-gemini/gemini-cli). Evaluate offers, generate tailored CVs, scan portals, fill applications, and track everything — powered by AI agents with real browser automation.
 
 [![Gemini CLI](https://img.shields.io/badge/Gemini_CLI-4285F4?style=flat&logo=google&logoColor=white)](https://github.com/google-gemini/gemini-cli)
-[![Chrome DevTools MCP](https://img.shields.io/badge/Chrome_DevTools_MCP-4285F4?style=flat&logo=googlechrome&logoColor=white)](https://github.com/AjayKannan97/chrome-devtools-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org)
 [![Go](https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white)](https://go.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-> **Fork of [santifer/career-ops](https://github.com/santifer/career-ops)** — originally built on Claude Code by [Santiago Fernández de Valderrama](https://santifer.io). This fork migrates the agent layer to Gemini CLI's `.toml` command architecture, 1M token context, native `web-search`/`web-fetch` tools, and adds [Chrome DevTools MCP](https://github.com/AjayKannan97/chrome-devtools-mcp) for real browser automation.
+> **Fork of [santifer/career-ops](https://github.com/santifer/career-ops)** — originally built on Claude Code by [Santiago Fernández de Valderrama](https://santifer.io). This fork migrates the agent layer to Gemini CLI’s `.toml` command architecture, 1M token context, and native `web-search`/`web-fetch` tools.
 
 ---
 
@@ -37,6 +36,7 @@ Career-Ops turns Gemini CLI into a job search command center. Instead of manuall
 | **Portal Scanner** | 45+ companies pre-configured + custom queries across major job boards |
 | **Batch Processing** | Parallel evaluation with `gemini --yolo` workers |
 | **Dashboard TUI** | Go-based terminal UI to browse, filter, and sort your pipeline |
+| **Web Dashboard** | Browser-based pipeline viewer at `localhost:8080` |
 | **Pipeline Integrity** | Automated merge, dedup, status normalization, and health checks |
 
 ## Quick Start
@@ -65,6 +65,8 @@ Then paste a job URL or use any command:
 
 ```
 /career-ops:auto-pipeline {JD or URL}   → Full pipeline (evaluate + PDF + tracker)
+/career-ops:evaluate                    → A–F evaluation of a single offer
+/career-ops:compare                     → Side-by-side comparison of 3–5 offers
 /career-ops:scan                        → Scan portals for new offers
 /career-ops:pdf                         → Generate ATS-optimized CV
 /career-ops:apply                       → Fill application forms with AI
@@ -72,7 +74,7 @@ Then paste a job URL or use any command:
 /career-ops:tracker                     → View application status
 /career-ops:pipeline                    → Process pending URLs
 /career-ops:deep                        → Deep company research (6 axes)
-/career-ops:contacto                    → LinkedIn outreach messages
+/career-ops:outreach                    → LinkedIn outreach messages
 /career-ops:training                    → Evaluate a course/certification
 /career-ops:project                     → Evaluate a portfolio project idea
 ```
@@ -103,17 +105,11 @@ Paste a job URL or description
 
 ## Browser Automation
 
-Career-Ops uses [Chrome DevTools MCP](https://github.com/AjayKannan97/chrome-devtools-mcp) for real browser interaction:
+Career-Ops supports browser automation for portal scanning and form-filling via Playwright:
 
 - **Scanning** — Navigate SPAs, click through pagination, extract job listings
 - **Applications** — Read form fields, generate tailored answers, fill forms (never auto-submits)
 - **Verification** — Load offer pages to confirm details
-
-Start Chrome with remote debugging before using browser features:
-
-```bash
-chrome --remote-debugging-port=9222
-```
 
 ## Pre-configured Portals
 
@@ -134,14 +130,16 @@ The scanner includes **45+ companies** and **19 search queries** across major jo
 ```
 career-ops-gemini/
 ├── GEMINI.md                    # Agent system instructions
-├── .gemini/commands/career-ops/ # 13 .toml command definitions
-├── .mcp.json                    # Chrome DevTools MCP config
+├── .gemini/commands/career-ops/ # 14 .toml command definitions
 ├── modes/                       # 14 skill modes
 │   ├── _shared.md               # Shared context & archetypes
+│   ├── evaluate.md              # A–F evaluation
+│   ├── compare.md               # Offer comparison matrix
+│   ├── outreach.md              # LinkedIn outreach
 │   ├── scan.md                  # Portal scanner
 │   ├── apply.md                 # Application assistant
 │   ├── batch.md                 # Batch processing
-│   └── ...                      # oferta, pdf, deep, etc.
+│   └── ...                      # pdf, deep, pipeline, etc.
 ├── config/
 │   └── profile.example.yml      # Profile template
 ├── templates/
@@ -152,6 +150,7 @@ career-ops-gemini/
 │   ├── batch-prompt.md          # Worker prompt
 │   └── batch-runner.sh          # Batch orchestrator
 ├── dashboard/                   # Go TUI pipeline viewer
+├── webui/                       # Go web dashboard (port 8080)
 ├── examples/                    # Sample CV, report, article digest
 ├── docs/                        # Setup, architecture, customization
 └── fonts/                       # PDF typography
@@ -162,7 +161,7 @@ career-ops-gemini/
 | Layer | Technology |
 |-------|------------|
 | **Agent** | [Gemini CLI](https://github.com/google-gemini/gemini-cli) with `.toml` custom commands |
-| **Browser** | [Chrome DevTools MCP](https://github.com/AjayKannan97/chrome-devtools-mcp) |
+| **Browser** | Playwright for PDF generation and portal scanning |
 | **PDF** | Playwright + HTML template |
 | **Search** | Gemini native `web-search` / `web-fetch` + Greenhouse API |
 | **Dashboard** | Go + Bubble Tea + Lipgloss (Catppuccin Mocha) |

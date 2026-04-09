@@ -1,27 +1,16 @@
-# Modo: training — Evaluación de Formación
+# Mode: training — Course & Certification Evaluation
 
-Para cada curso/cert que el candidato pregunte, evaluar 6 dimensiones:
+Evaluate a course, bootcamp, or certification to see if it's worth the time/money given the target career path.
 
-| Dimensión | Qué evalúa |
-|-----------|------------|
-| Alineación North Star | ¿Acerca o aleja del objetivo? |
-| Señal recruiter | ¿Qué piensan HMs al ver esto en un CV? |
-| Tiempo y esfuerzo | Semanas × horas/semana |
-| Coste de oportunidad | ¿Qué no puede hacer durante ese tiempo? |
-| Riesgos | ¿Contenido outdated? ¿Brand débil? ¿Demasiado básico? |
-| Entregable portfolio | ¿Produce un artefacto demostrable? |
+## Workflow
 
-## Veredictos
+1. **Read Course Info**: User pastes URL or syllabus.
+2. **Archetype Triage**: Which archetypes does this course strengthen?
+3. **Gap Analysis**: Does this course fill any of the current profile gaps identified in previous evaluations?
+4. **ROI Check**: Is this certification recognized by the target companies?
 
-- **HACER** → plan de 4-12 semanas con entregables semanales y scoreboard
-- **NO HACER** → alternativa mejor con justificación
-- **HACER CON TIMEBOX** (máx X semanas) → plan condensado, solo lo esencial
+## Output Sections
 
-## Prioridad
-
-Formación que mejore credibilidad en "production-grade AI":
-1. Evals y testing de LLMs
-2. Observability y monitoring
-3. Cost/reliability trade-offs
-4. AI governance y safety
-5. Enterprise AI architecture
+- **Strategic Value**: "High for LLMOps, Low for Product Management."
+- **Proof Point**: How to list this on the CV before even finishing it.
+- **Alternative**: "This course is €500, but this Open Source project provides the same signal for free."

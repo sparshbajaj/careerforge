@@ -26,17 +26,20 @@ AI-powered job search automation built on Gemini CLI: pipeline tracking, offer e
 | `interview-prep/story-bank.md` | Accumulated STAR+R stories across evaluations |
 | `reports/` | Evaluation reports (format: `{###}-{company-slug}-{YYYY-MM-DD}.md`) |
 
-### First Run — Onboarding (IMPORTANT)
+### Core Workflow — Environment Check (CRITICAL)
 
-**Before doing ANYTHING else, check if the system is set up.** Run these checks silently every time a session starts:
+**Before performing any action (evaluations, scans, or mode execution), you MUST verify the environment is ready.** This check MUST be performed **silently and automatically** at the start of every session, new conversation, or when a new job URL is provided. **Do NOT ask the user if they have these files — read them directly.**
 
-1. Does `cv.md` exist?
-2. Does `config/profile.yml` exist (not just profile.example.yml)?
-3. Does `portals.yml` exist (not just templates/portals.example.yml)?
+1.  **Read `cv.md`**: Load it silently. This is the canonical source of truth.
+2.  **Read `config/profile.yml`**: Load candidate identity and targets.
+3.  **Read `portals.yml`**: Load search configuration.
+4.  **Read `data/applications.md`**: Load application tracker.
 
-**If ANY of these is missing, enter onboarding mode.** Do NOT proceed with evaluations, scans, or any other mode until the basics are in place. Guide the user step by step:
+**If any file is missing, enter Onboarding Mode immediately.** If they exist, proceed with the requested task. **Do NOT ask the user if they already have these files if the check passes. Do NOT prompt the user to share their CV if cv.md exists.**
 
-#### Step 1: CV (required)
+### Onboarding Steps (If missing)
+
+#### Step 1: CV (Required)
 If `cv.md` is missing, ask:
 > "I don't have your CV yet. You can either:
 > 1. Paste your CV here and I'll convert it to markdown
@@ -45,62 +48,16 @@ If `cv.md` is missing, ask:
 >
 > Which do you prefer?"
 
-Create `cv.md` from whatever they provide. Make it clean markdown with standard sections (Summary, Experience, Projects, Education, Skills).
+#### Step 2: Profile (Required)
+If `config/profile.yml` is missing, copy from `config/profile.example.yml` and then ask for missing details (Full name, email, target roles, salary range).
 
-#### Step 2: Profile (required)
-If `config/profile.yml` is missing, copy from `config/profile.example.yml` and then ask:
-> "I need a few details to personalize the system:
-> - Your full name and email
-> - Your location and timezone
-> - What roles are you targeting? (e.g., 'Senior Backend Engineer', 'AI Product Manager')
-> - Your salary target range
->
-> I'll set everything up for you."
-
-Fill in `config/profile.yml` with their answers. For archetypes, map their target roles to the closest matches and update `modes/_shared.md` if needed.
-
-#### Step 3: Portals (recommended)
-If `portals.yml` is missing:
-> "I'll set up the job scanner with 45+ pre-configured companies. Want me to customize the search keywords for your target roles?"
-
-Copy `templates/portals.example.yml` → `portals.yml`. If they gave target roles in Step 2, update `title_filter.positive` to match.
+#### Step 3: Portals (Recommended)
+If `portals.yml` is missing, copy from `templates/portals.example.yml`.
 
 #### Step 4: Tracker
-If `data/applications.md` doesn't exist, create it:
-```markdown
-# Applications Tracker
+If `data/applications.md` is missing, create it with the standard header.
 
-| # | Date | Company | Role | Score | Status | PDF | Report | Notes |
-|---|------|---------|------|-------|--------|-----|--------|-------|
-```
-
-#### Step 5: Ready
-Once all files exist, confirm:
-> "You're all set! You can now:
-> - Paste a job URL to evaluate it
-> - Run `/career-ops:scan` to search portals
-> - Type `/career-ops` to see all commands
->
-> Everything is customizable — just ask me to change anything.
->
-> Tip: Having a personal portfolio dramatically improves your job search. If you don't have one yet, the author's portfolio is also open source: github.com/santifer/cv-santiago — feel free to fork it and make it yours."
-
-Then suggest automation:
-> "Want me to scan for new offers automatically? I can set up a recurring scan every few days so you don't miss anything. Just say 'scan every 3 days' and I'll configure it."
-
-If the user accepts, suggest adding a cron job or remind them to run `/career-ops:scan` periodically.
-
-### Personalization
-
-This system is designed to be customized by YOU (Gemini). When the user asks you to change archetypes, translate modes, adjust scoring, add companies, or modify negotiation scripts -- do it directly. You read the same files you use, so you know exactly what to edit.
-
-**Common customization requests:**
-- "Change the archetypes to [backend/frontend/data/devops] roles" → edit `modes/_shared.md`
-- "Translate the modes to English" → edit all files in `modes/`
-- "Add these companies to my portals" → edit `portals.yml`
-- "Update my profile" → edit `config/profile.yml`
-- "Change the CV template design" → edit `templates/cv-template.html`
-- "Adjust the scoring weights" → edit `modes/_shared.md` and `batch/batch-prompt.md`
+---
 
 ### Command Modes
 
@@ -109,9 +66,9 @@ Commands use Gemini CLI's `/group:command` syntax. Each maps to a `.toml` file i
 | If the user... | Command |
 |----------------|---------|
 | Pastes JD or URL | `/career-ops:auto-pipeline` (evaluate + report + PDF + tracker) |
-| Asks to evaluate offer | `/career-ops:oferta` |
-| Asks to compare offers | `/career-ops:ofertas` |
-| Wants LinkedIn outreach | `/career-ops:contacto` |
+| Asks to evaluate offer | `/career-ops:evaluate` |
+| Asks to compare offers | `/career-ops:compare` |
+| Wants LinkedIn outreach | `/career-ops:outreach` |
 | Asks for company research | `/career-ops:deep` |
 | Wants to generate CV/PDF | `/career-ops:pdf` |
 | Evaluates a course/cert | `/career-ops:training` |
