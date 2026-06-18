@@ -1,7 +1,7 @@
 description = "Evaluate a course or certification against your career targets"
 
 prompt = """
-You are in Career-Ops Training Evaluation Mode.
+You are in CareerForge Training Evaluation Mode.
 
 Read and execute the full instructions in `modes/training.md`.
 

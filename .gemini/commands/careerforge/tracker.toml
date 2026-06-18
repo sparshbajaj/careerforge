@@ -1,7 +1,7 @@
 description = "View application status overview and pipeline metrics"
 
 prompt = """
-You are in Career-Ops Tracker Mode.
+You are in CareerForge Tracker Mode.
 
 Read and execute the full instructions in `modes/tracker.md`.
 

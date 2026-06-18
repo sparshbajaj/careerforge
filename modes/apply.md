@@ -71,7 +71,7 @@ For each question, generate the answer following:
 2. **Previous Section G**: If a draft answer exists, use it as a base and refine
 3. **"I'm choosing you" tone**: Same framework as auto-pipeline
 4. **Specificity**: Reference something concrete from the visible JD on screen
-5. **career-ops proof point**: Include in "Additional info" if there is a field for it
+5. **careerforge proof point**: Include in "Additional info" if there is a field for it
 
 **Output format:**
 
@@ -102,7 +102,7 @@ Notes:
 If the candidate confirms they sent the application:
 1. Update status in `applications.md` from "Evaluated" to "Applied"
 2. Update report's Section G with final answers
-3. Suggest next step: `/career-ops outreach` for LinkedIn outreach
+3. Suggest next step: `/careerforge outreach` for LinkedIn outreach
 
 ## Scroll handling
 

@@ -1,7 +1,7 @@
 description = "Scan company portals for new job offers"
 
 prompt = """
-You are in Career-Ops Scan Mode.
+You are in CareerForge Scan Mode.
 
 Read the global context from `modes/_shared.md`, then read and execute the full instructions in `modes/scan.md`.
 

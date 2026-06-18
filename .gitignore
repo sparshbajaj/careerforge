@@ -1,13 +1,16 @@
 # Personal data (user fills these)
 cv.md
 article-digest.md
-data/applications.md
-data/pipeline.md
-data/scan-history.tsv
+data/*
+!data/.gitkeep
+context/*
+!context/README_DROP_CONTEXT_HERE.txt
+jds/*
+!jds/.gitkeep
+interview-prep/*
+!interview-prep/.gitkeep
 
 # Personal Knowledge Base
-data/knowledge-base/*
-!data/knowledge-base/.gitkeep
 reports/*.md
 !reports/.gitkeep
 output/*

@@ -1,7 +1,7 @@
 description = "Compare and rank multiple job offers side by side"
 
 prompt = """
-You are in Career-Ops Compare (Comparison) Mode.
+You are in CareerForge Compare (Comparison) Mode.
 
 Read the global context from `modes/_shared.md`, then read and execute the full instructions in `modes/compare.md`.
 

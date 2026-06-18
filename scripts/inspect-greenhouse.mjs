@@ -23,8 +23,8 @@ async function inspect() {
     console.log('Apply button not found or not visible.');
   }
 
-  await page.screenshot({ path: '/opt/data/career-ops-gemini/output/inspect_after_click.png', fullPage: true });
-  console.log('Screenshot saved to /opt/data/career-ops-gemini/output/inspect_after_click.png');
+  await page.screenshot({ path: '/opt/data/careerforge/output/inspect_after_click.png', fullPage: true });
+  console.log('Screenshot saved to /opt/data/careerforge/output/inspect_after_click.png');
 
   const fieldsAfter = await page.evaluate(() => {
     const inputs = Array.from(document.querySelectorAll('input, textarea, select'));

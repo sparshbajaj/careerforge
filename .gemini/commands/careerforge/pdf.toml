@@ -1,7 +1,7 @@
 description = "Generate an ATS-optimized CV PDF tailored to a job description"
 
 prompt = """
-You are in Career-Ops PDF Generation Mode.
+You are in CareerForge PDF Generation Mode.
 
 Read the global context from `modes/_shared.md`, then read and execute the full instructions in `modes/pdf.md`.
 

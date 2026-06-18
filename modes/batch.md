@@ -38,6 +38,6 @@ For batch workers, use `web-fetch` and mark the report header with `**Verificati
 ## Execution Command
 
 Usually triggered via:
-`gemini /career-ops:batch`
+`gemini /careerforge:batch`
 Or for high-volume automated processing:
-`gemini --yolo /career-ops:batch`
+`gemini --yolo /careerforge:batch`

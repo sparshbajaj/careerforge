@@ -1,7 +1,7 @@
 description = "Evaluate a portfolio project idea for career impact"
 
 prompt = """
-You are in Career-Ops Project Evaluation Mode.
+You are in CareerForge Project Evaluation Mode.
 
 Read and execute the full instructions in `modes/project.md`.
 

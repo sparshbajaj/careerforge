@@ -26,7 +26,7 @@ All notable changes to this project will be documented in this file.
 ## [1.0.0] - 2026-04-06
 
 ### Added
-- Initial Gemini CLI migration from [santifer/career-ops](https://github.com/santifer/career-ops)
+- Initial Gemini CLI migration from [sparshbajaj/careerforge](https://github.com/sparshbajaj/careerforge)
 - 13 `.toml` command definitions for Gemini CLI
 - Chrome DevTools MCP integration for browser automation
 - Go TUI dashboard (Bubble Tea + Lipgloss)

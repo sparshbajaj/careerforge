@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# career-ops batch runner — standalone orchestrator for gemini --yolo workers
+# careerforge batch runner — standalone orchestrator for gemini --yolo workers
 # Reads batch-input.tsv, delegates each offer to a gemini --yolo worker,
 # tracks state in batch-state.tsv for resumability.
 
@@ -26,7 +26,7 @@ MAX_RETRIES=2
 
 usage() {
   cat <<'USAGE'
-career-ops batch runner — process job offers in batch via gemini --yolo workers
+careerforge batch runner — process job offers in batch via gemini --yolo workers
 Uses Gemini CLI with auto-approval mode.
 
 Usage: batch-runner.sh [OPTIONS]
@@ -309,10 +309,10 @@ $prompt" \
 merge_tracker() {
   echo ""
   echo "=== Merging tracker additions ==="
-  node "$PROJECT_DIR/career-ops/merge-tracker.mjs"
+  node "$PROJECT_DIR/careerforge/merge-tracker.mjs"
   echo ""
   echo "=== Verifying pipeline integrity ==="
-  node "$PROJECT_DIR/career-ops/verify-pipeline.mjs" || echo "⚠️  Verification found issues (see above)"
+  node "$PROJECT_DIR/careerforge/verify-pipeline.mjs" || echo "⚠️  Verification found issues (see above)"
 }
 
 # Print summary
@@ -372,7 +372,7 @@ main() {
     exit 0
   fi
 
-  echo "=== career-ops batch runner ==="
+  echo "=== careerforge batch runner ==="
   echo "Parallel: $PARALLEL | Max retries: $MAX_RETRIES"
   echo "Input: $total_input offers"
   echo ""

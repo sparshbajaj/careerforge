@@ -25,4 +25,4 @@ Summary of new roles found:
 - Filtered: 38 (duplicates or low match)
 - Added to pipeline: 7 new roles
 ```
-Suggest running `/career-ops:pipeline` next.
+Suggest running `/careerforge:pipeline` next.

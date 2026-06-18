@@ -1,7 +1,7 @@
 description = "Full auto-pipeline: evaluate a job offer + report + PDF + tracker entry"
 
 prompt = """
-You are in Career-Ops Auto-Pipeline Mode.
+You are in CareerForge Auto-Pipeline Mode.
 
 Read the global context from `modes/_shared.md`, then read and execute the full instructions in `modes/auto-pipeline.md`.
 

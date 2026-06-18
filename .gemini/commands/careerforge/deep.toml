@@ -1,7 +1,7 @@
 description = "Deep research on a company and role across 6 axes"
 
 prompt = """
-You are in Career-Ops Deep Research Mode.
+You are in CareerForge Deep Research Mode.
 
 Read and execute the full instructions in `modes/deep.md`.
 

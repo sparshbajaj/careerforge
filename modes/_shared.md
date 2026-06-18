@@ -1,10 +1,10 @@
-# Shared Context -- career-ops
+# Shared Context -- careerforge
 
 <!-- ============================================================
      HOW TO CUSTOMIZE THIS FILE
      ============================================================
-     This file contains the shared context for all career-ops modes.
-     Before using career-ops, you MUST:
+     This file contains the shared context for all careerforge modes.
+     Before using careerforge, you MUST:
      1. Fill in config/profile.yml with your personal data
      2. Create your cv.md in the project root
      3. Create article-digest.md with your proof points

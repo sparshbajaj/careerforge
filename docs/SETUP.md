@@ -12,8 +12,8 @@
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/YOUR-USER/career-ops-gemini.git
-cd career-ops-gemini
+git clone https://github.com/YOUR-USER/careerforge.git
+cd careerforge
 npm install
 ```
 
@@ -57,12 +57,12 @@ Then paste a job offer URL or description. Career-ops will automatically evaluat
 | Action | How |
 |--------|-----|
 | Evaluate an offer | Paste a URL or JD text |
-| Search for offers | `/career-ops:scan` |
-| Process pending URLs | `/career-ops:pipeline` |
-| Generate a PDF | `/career-ops:pdf` |
-| Batch evaluate | `/career-ops:batch` |
-| Check tracker status | `/career-ops:tracker` |
-| Fill application form | `/career-ops:apply` |
+| Search for offers | `/careerforge:scan` |
+| Process pending URLs | `/careerforge:pipeline` |
+| Generate a PDF | `/careerforge:pdf` |
+| Batch evaluate | `/careerforge:batch` |
+| Check tracker status | `/careerforge:tracker` |
+| Fill application form | `/careerforge:apply` |
 
 ## Verify Setup
 

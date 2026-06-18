@@ -1,16 +1,16 @@
-# 🚀 Career-Ops: Your AI Job Search Engine
+# 🚀 CareerForge: Your AI Job Search Engine
 
-Welcome to **Career-Ops**! If you're tired of manually tweaking your resume for every job, tracking applications in a messy spreadsheet, and wondering why you aren't hearing back—you're in the right place.
+Welcome to **CareerForge**! If you're tired of manually tweaking your resume for every job, tracking applications in a messy spreadsheet, and wondering why you aren't hearing back—you're in the right place.
 
-Career-Ops is an automated, AI-powered system built on the **Antigravity CLI (`agy`)**. It completely automates the tedious parts of applying for jobs so you can focus on interviewing.
+CareerForge is an automated, AI-powered system built on the **Antigravity CLI (`agy`)**. It completely automates the tedious parts of applying for jobs so you can focus on interviewing.
 
-It doesn't matter if you are a Software Engineer, a UX Designer, or a Sales Executive. Career-Ops is **role-agnostic** and learns about your specific career as you use it.
+It doesn't matter if you are a Software Engineer, a UX Designer, or a Sales Executive. CareerForge is **role-agnostic** and learns about your specific career as you use it.
 
 ---
 
 ## ✨ What exactly does it do?
 
-Instead of spending an hour tailoring a resume, you just give Career-Ops a job link. In under a minute, the system will:
+Instead of spending an hour tailoring a resume, you just give CareerForge a job link. In under a minute, the system will:
 
 1. **Evaluate the Job:** It reads the job description and scores how well you match it (from A to F).
 2. **Rewrite your CV:** It grabs your master resume (`cv.md`) and rewrites the bullet points to perfectly mirror the vocabulary of the job description.
@@ -36,15 +36,15 @@ Open your terminal, clone the repo, and run the initializer script!
 
 **For Windows:**
 ```bash
-git clone https://github.com/sparshbajaj/career-ops-gemini.git
-cd career-ops-gemini
+git clone https://github.com/sparshbajaj/careerforge.git
+cd careerforge
 ./init.bat
 ```
 
 **For Mac & Linux:**
 ```bash
-git clone https://github.com/sparshbajaj/career-ops-gemini.git
-cd career-ops-gemini
+git clone https://github.com/sparshbajaj/careerforge.git
+cd careerforge
 bash init.sh
 ```
 
@@ -88,8 +88,8 @@ If you want a 1-click button inside Windows Terminal to launch your entire setup
 {
     "guid": "{a5b8f0d3-3c9f-4f2a-b6e1-9d2c1b4a5f6e}",
     "name": "CareerForge Studio",
-    "commandline": "cmd.exe /c \"D:\\Development\\Projects\\career-ops-gemini\\launch.bat\"",
-    "startingDirectory": "D:\\Development\\Projects\\career-ops-gemini",
+    "commandline": "cmd.exe /c \"D:\\Development\\Projects\\careerforge\\launch.bat\"",
+    "startingDirectory": "D:\\Development\\Projects\\careerforge",
     "icon": "🤖"
 }
 ```
