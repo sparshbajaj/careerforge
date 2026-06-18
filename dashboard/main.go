@@ -10,6 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/santifer/career-ops/dashboard/internal/data"
+	"github.com/santifer/career-ops/dashboard/internal/model"
 	"github.com/santifer/career-ops/dashboard/internal/theme"
 	"github.com/santifer/career-ops/dashboard/internal/ui/screens"
 )
@@ -58,13 +59,7 @@ func (m appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		apps := data.ParseApplications(m.careerOpsPath)
 		metrics := data.ComputeMetrics(apps)
-		old := m.pipeline
-		m.pipeline = screens.NewPipelineModel(
-			theme.NewTheme("catppuccin-mocha"),
-			apps, metrics, m.careerOpsPath,
-			old.Width(), old.Height(),
-		)
-		m.pipeline.CopyReportCache(&old)
+		m.pipeline.UpdateData(apps, metrics)
 		return m, nil
 
 	case screens.PipelineOpenReportMsg:
@@ -124,8 +119,7 @@ func main() {
 	// Load applications
 	apps := data.ParseApplications(careerOpsPath)
 	if apps == nil {
-		fmt.Fprintf(os.Stderr, "Error: could not find applications.md in %s or %s/data/\n", careerOpsPath, careerOpsPath)
-		os.Exit(1)
+		apps = []model.CareerApplication{}
 	}
 
 	// Compute metrics

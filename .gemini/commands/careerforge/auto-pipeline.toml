@@ -1,0 +1,20 @@
+description = "Full auto-pipeline: evaluate a job offer + report + PDF + tracker entry"
+
+prompt = """
+You are in Career-Ops Auto-Pipeline Mode.
+
+Read the global context from `modes/_shared.md`, then read and execute the full instructions in `modes/auto-pipeline.md`.
+
+Execute the complete pipeline for the given job offer:
+1. Extract JD (from URL via `web-fetch` or provided text)
+2. Evaluate A-F (6 blocks)
+3. Generate report .md
+4. Generate ATS-optimized PDF via `shell` (`node generate-pdf.mjs`)
+5. Write tracker TSV to `batch/tracker-additions/`
+6. Merge via `shell` (`node merge-tracker.mjs`)
+
+Use `web-search` for compensation research and company data.
+Use `web-fetch` to retrieve JDs from URLs, or Chrome DevTools MCP (`navigate_page` + `take_snapshot`) for JS-heavy pages.
+
+IMPORTANT: Do NOT run destructive shell commands. Only read files, fetch URLs, and write to reports/, output/, and batch/tracker-additions/.
+"""

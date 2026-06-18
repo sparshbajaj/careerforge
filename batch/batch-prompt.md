@@ -203,44 +203,26 @@ Where `{company-slug}` is the company name in lowercase, no spaces, with hyphens
 3. Detect JD language → CV language (EN default)
 4. Detect company location → paper format: US/Canada → `letter`, rest → `a4`
 5. Detect archetype → adapt framing
-6. Rewrite Professional Summary injecting keywords
-7. Select top 3-4 most relevant projects
-8. Reorder experience bullets by relevance to the JD
-9. Build competency grid (6-8 keyword phrases)
-10. Inject keywords into existing achievements (**NEVER invent**)
-11. Generate full HTML from template (read `templates/cv-template.html`)
-12. Write HTML to `/tmp/cv-candidate-{company-slug}.html`
-13. Execute:
+6. Read and follow `modes/pdf-rules.md` for ATS, XYZ and STAR, writing, keyword, and design rules
+7. Rewrite Professional Summary injecting keywords
+8. Select top 3-4 most relevant projects
+9. Rewrite experience bullets to 5 per role, ordered by JD relevance, with the first 3 in XYZ format (Accomplished X as measured by Y by doing Z) and the last 2 in STAR format (Situation, Task, Action, Result)
+10. Build competency grid (6-8 keyword phrases)
+11. Inject keywords into existing achievements (**NEVER invent**)
+12. Generate full HTML from template (read `templates/cv-template.html`)
+13. Write HTML to `/tmp/cv-candidate-{company-slug}.html`
+14. Run `node lint-cv.mjs --cv /tmp/cv-candidate-{company-slug}.html --sources cv.md,article-digest.md` and fix any errors
+15. Run `node keyword-coverage.mjs --jd {{JD_FILE}} --cv /tmp/cv-candidate-{company-slug}.html` and use results in the report
+16. Execute:
 ```bash
 node generate-pdf.mjs \
   /tmp/cv-candidate-{company-slug}.html \
   output/cv-candidate-{company-slug}-{{DATE}}.pdf \
   --format={letter|a4}
 ```
-14. Report: PDF path, page count, % keyword coverage
+17. Report: PDF path, page count, keyword coverage with exact matches and missing keywords
 
-**ATS Rules:**
-- Single-column (no sidebars)
-- Standard headers: "Professional Summary", "Work Experience", "Education", "Skills", "Certifications", "Projects"
-- No text in images/SVGs
-- No critical info in headers/footers
-- UTF-8, selectable text
-- Distributed keywords: Summary (top 5), first bullet of each role, Skills section
-
-**Design:**
-- Fonts: Space Grotesk (headings, 600-700) + DM Sans (body, 400-500)
-- Self-hosted fonts: `fonts/`
-- Header: Space Grotesk 24px bold + cyan→purple 2px gradient + contact info
-- Section headers: Space Grotesk 13px uppercase, cyan color `hsl(187,74%,32%)`
-- Body: DM Sans 11px, line-height 1.5
-- Company names: purple `hsl(270,70%,45%)`
-- Margins: 0.6in
-- Background: white
-
-**Keyword injection strategy (ethical):**
-- Rephrase real experience with exact JD vocabulary
-- NEVER add skills the candidate doesn't have
-- Example: JD says "RAG pipelines" and CV says "LLM workflows with retrieval" → "RAG pipeline design and LLM orchestration workflows"
+Follow `modes/pdf-rules.md` for ATS, XYZ and STAR, writing, keyword, and design rules.
 
 **Template placeholders (in cv-template.html):**
 

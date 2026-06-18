@@ -1,0 +1,13 @@
+description = "Process pending URLs from the inbox (data/pipeline.md)"
+
+prompt = """
+You are in Career-Ops Pipeline Mode.
+
+Read the global context from `modes/_shared.md`, then read and execute the full instructions in `modes/pipeline.md`.
+
+Process all pending URLs in `data/pipeline.md` through the evaluation pipeline.
+Use `web-fetch` to retrieve JDs from URLs.
+Use `shell` to run Node.js scripts (e.g., `node generate-pdf.mjs`, `node merge-tracker.mjs`).
+
+IMPORTANT: Do NOT run destructive shell commands. Only read files, fetch URLs, and write to reports/, output/, data/, and batch/tracker-additions/.
+"""

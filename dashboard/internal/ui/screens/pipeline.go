@@ -2,9 +2,11 @@ package screens
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -105,6 +107,19 @@ type PipelineModel struct {
 	// Status picker sub-state
 	statusPicker bool
 	statusCursor int
+	// Live update tracking
+	lastAppUpdate time.Time
+	
+	onboarding bool
+	setupMsg   string
+}
+
+type tickMsg time.Time
+
+func tickCmd() tea.Cmd {
+	return tea.Tick(time.Millisecond*500, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
 }
 
 // NewPipelineModel creates a new pipeline screen.
@@ -121,13 +136,40 @@ func NewPipelineModel(t theme.Theme, apps []model.CareerApplication, metrics mod
 		careerOpsPath: careerOpsPath,
 		reportCache:   make(map[string]reportSummary),
 	}
+	
+	m.checkOnboarding()
 	m.applyFilterAndSort()
 	return m
 }
 
+func (m *PipelineModel) checkOnboarding() {
+	missing := []string{}
+	if _, err := os.Stat(filepath.Join(m.careerOpsPath, "cv.md")); os.IsNotExist(err) {
+		missing = append(missing, "cv.md")
+	}
+	if _, err := os.Stat(filepath.Join(m.careerOpsPath, "config", "profile.yml")); os.IsNotExist(err) {
+		missing = append(missing, "config/profile.yml")
+	}
+	
+	appPath := filepath.Join(m.careerOpsPath, "applications.md")
+	if _, err := os.Stat(appPath); os.IsNotExist(err) {
+		appPath = filepath.Join(m.careerOpsPath, "data", "applications.md")
+		if _, err := os.Stat(appPath); os.IsNotExist(err) {
+			missing = append(missing, "applications.md")
+		}
+	}
+
+	if len(missing) > 0 {
+		m.onboarding = true
+		m.setupMsg = "Missing required files: " + strings.Join(missing, ", ")
+	} else {
+		m.onboarding = false
+	}
+}
+
 // Init implements tea.Model.
 func (m PipelineModel) Init() tea.Cmd {
-	return nil
+	return tickCmd()
 }
 
 // Resize updates dimensions.
@@ -141,6 +183,14 @@ func (m PipelineModel) Width() int { return m.width }
 
 // Height returns the current height.
 func (m PipelineModel) Height() int { return m.height }
+
+// UpdateData updates the underlying data and recalculates without losing scroll or UI state.
+func (m *PipelineModel) UpdateData(apps []model.CareerApplication, metrics model.PipelineMetrics) {
+	m.apps = apps
+	m.metrics = metrics
+	m.applyFilterAndSort()
+	m.adjustScroll()
+}
 
 // CopyReportCache copies the report cache from another pipeline model.
 func (m *PipelineModel) CopyReportCache(other *PipelineModel) {
@@ -170,6 +220,32 @@ func (m PipelineModel) CurrentApp() (model.CareerApplication, bool) {
 // Update handles input for the pipeline screen.
 func (m PipelineModel) Update(msg tea.Msg) (PipelineModel, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tickMsg:
+		// Reload apps if applications.md changed or we are onboarding
+		m.checkOnboarding()
+		appFile := filepath.Join(m.careerOpsPath, "data", "applications.md")
+		if info, err := os.Stat(appFile); err == nil {
+			if info.ModTime().After(m.lastAppUpdate) {
+				m.lastAppUpdate = info.ModTime()
+				apps := data.ParseApplications(m.careerOpsPath)
+				if apps != nil {
+					metrics := data.ComputeMetrics(apps)
+					m.UpdateData(apps, metrics)
+				}
+			}
+		} else if info, err := os.Stat(filepath.Join(m.careerOpsPath, "applications.md")); err == nil {
+			if info.ModTime().After(m.lastAppUpdate) {
+				m.lastAppUpdate = info.ModTime()
+				apps := data.ParseApplications(m.careerOpsPath)
+				if apps != nil {
+					metrics := data.ComputeMetrics(apps)
+					m.UpdateData(apps, metrics)
+				}
+			}
+		}
+		// Returning the tick cmd causes a View() re-render which naturally reads the latest ai.log!
+		return m, tickCmd()
+		
 	case tea.KeyMsg:
 		if m.statusPicker {
 			return m.handleStatusPicker(msg)
@@ -180,6 +256,7 @@ func (m PipelineModel) Update(msg tea.Msg) (PipelineModel, tea.Cmd) {
 		m.height = msg.Height
 		return m, nil
 	}
+	
 	return m, nil
 }
 
@@ -443,12 +520,27 @@ func (m PipelineModel) cursorLineEstimate() int {
 
 // View renders the pipeline screen.
 func (m PipelineModel) View() string {
+	if m.width == 0 || m.height == 0 {
+		return "Initializing..."
+	}
+
+	if m.onboarding {
+		return m.renderOnboarding()
+	}
+
+	showRightPanel := m.width > 110
+	rightWidth := 45
+	if showRightPanel {
+		m.width = m.width - rightWidth - 2
+	}
+
 	header := m.renderHeader()
 	tabs := m.renderTabs()
 	metricsBar := m.renderMetrics()
 	sortBar := m.renderSortBar()
 	body := m.renderBody()
 	preview := m.renderPreview()
+	commands := m.renderCommands()
 	help := m.renderHelp()
 
 	// Apply scroll to body
@@ -459,7 +551,8 @@ func (m PipelineModel) View() string {
 
 	// Calculate available height for body
 	previewLines := strings.Count(preview, "\n") + 1
-	availHeight := m.height - 7 - previewLines // header + tabs(2) + metrics + sortbar + help + preview
+	cmdLines := strings.Count(commands, "\n") + 1
+	availHeight := m.height - 8 - previewLines - cmdLines
 	if availHeight < 3 {
 		availHeight = 3
 	}
@@ -473,22 +566,113 @@ func (m PipelineModel) View() string {
 		body = m.overlayStatusPicker(body)
 	}
 
-	return lipgloss.JoinVertical(lipgloss.Left,
+	leftSide := lipgloss.JoinVertical(lipgloss.Left,
 		header,
 		tabs,
 		metricsBar,
 		sortBar,
 		body,
 		preview,
+		commands,
 		help,
 	)
+
+	if !showRightPanel {
+		return leftSide
+	}
+
+	rightSide := m.renderRightPanel(rightWidth)
+	return lipgloss.JoinHorizontal(lipgloss.Top, leftSide, "  ", rightSide)
+}
+
+func (m PipelineModel) renderOnboarding() string {
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(m.theme.Peach).
+		Padding(2, 4).
+		Width(60)
+
+	title := lipgloss.NewStyle().Foreground(m.theme.Peach).Bold(true).Render("🤖 SMART ONBOARDING MODE")
+	
+	msg := lipgloss.JoinVertical(lipgloss.Left,
+		title,
+		"",
+		lipgloss.NewStyle().Foreground(m.theme.Text).Render("Welcome to CareerForge Studio!"),
+		"",
+		lipgloss.NewStyle().Foreground(m.theme.Subtext).Render(m.setupMsg),
+		"",
+		lipgloss.NewStyle().Foreground(m.theme.Green).Render("👉 To fix this automatically:"),
+		lipgloss.NewStyle().Foreground(m.theme.Subtext).Render("1. Drop your raw resume or notes into the `context/` folder."),
+		lipgloss.NewStyle().Foreground(m.theme.Subtext).Render("2. Switch to the `agy` pane on the right side."),
+		lipgloss.NewStyle().Foreground(m.theme.Subtext).Render("3. Type: \"Generate my profile and CV\""),
+		"",
+		lipgloss.NewStyle().Foreground(m.theme.Overlay).Render("I am monitoring your files. This screen will disappear"),
+		lipgloss.NewStyle().Foreground(m.theme.Overlay).Render("automatically as soon as the files are created!"),
+	)
+
+	centered := lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, boxStyle.Render(msg))
+	return centered
+}
+
+func (m PipelineModel) renderRightPanel(width int) string {
+	borderStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(m.theme.Overlay).
+		Width(width - 2).
+		Height(m.height - 2)
+
+	mascot := `     _____
+    [◎_◎]
+   /[___]\
+    /   \ `
+
+	mascotStyle := lipgloss.NewStyle().Foreground(m.theme.Peach).Bold(true).Padding(1, 0, 1, 4)
+	titleStyle := lipgloss.NewStyle().Foreground(m.theme.Sky).Bold(true).Padding(0, 0, 1, 2)
+	infoStyle := lipgloss.NewStyle().Foreground(m.theme.Subtext).Padding(0, 2)
+	dimStyle := lipgloss.NewStyle().Foreground(m.theme.Overlay).Padding(0, 2)
+
+	// Tail the AI log
+	logLines := []string{"Waiting for AI output..."}
+	if b, err := os.ReadFile(filepath.Join(m.careerOpsPath, "data", "ai.log")); err == nil {
+		allLines := strings.Split(strings.TrimSpace(string(b)), "\n")
+		if len(allLines) > 0 && allLines[0] != "" {
+			tailCount := 12
+			if len(allLines) < tailCount {
+				tailCount = len(allLines)
+			}
+			logLines = allLines[len(allLines)-tailCount:]
+		}
+	}
+	
+	// Format tail logs
+	var renderedLogs []string
+	for _, l := range logLines {
+		if len(l) > width-6 {
+			l = l[:width-9] + "..."
+		}
+		renderedLogs = append(renderedLogs, dimStyle.Render("> "+l))
+	}
+
+	content := lipgloss.JoinVertical(lipgloss.Left,
+		mascotStyle.Render(mascot),
+		titleStyle.Render("CLAW-D // AI ACTIVE"),
+		infoStyle.Render("I am monitoring the AI!"),
+		infoStyle.Render("Pasting a URL instantly"),
+		infoStyle.Render("triggers background processing."),
+		"",
+		titleStyle.Render("LIVE TERMINAL LOGS"),
+		lipgloss.JoinVertical(lipgloss.Left, renderedLogs...),
+	)
+
+	return borderStyle.Render(content)
 }
 
 func (m PipelineModel) renderHeader() string {
 	style := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(m.theme.Text).
-		Background(m.theme.Surface).
+		Border(lipgloss.NormalBorder(), false, false, true, false).
+		BorderForeground(m.theme.Mauve).
 		Width(m.width).
 		Padding(0, 2)
 
@@ -688,11 +872,16 @@ func (m PipelineModel) renderAppLine(app model.CareerApplication, selected bool)
 
 	if selected {
 		selStyle := lipgloss.NewStyle().
-			Background(m.theme.Overlay).
-			Width(m.width - 4)
-		return padStyle.Render(selStyle.Render(line))
+			Background(m.theme.Surface).
+			Bold(true).
+			BorderLeft(true).
+			BorderStyle(lipgloss.ThickBorder()).
+			BorderForeground(m.theme.Pink).
+			PaddingLeft(1).
+			Width(m.width - 6)
+		return padStyle.Render(selStyle.Render(strings.TrimPrefix(line, " ")))
 	}
-	return padStyle.Render(line)
+	return padStyle.Render("  " + strings.TrimPrefix(line, " "))
 }
 
 func (m PipelineModel) renderPreview() string {
@@ -701,12 +890,13 @@ func (m PipelineModel) renderPreview() string {
 		return ""
 	}
 
-	padStyle := lipgloss.NewStyle().Padding(0, 2)
-	divider := lipgloss.NewStyle().Foreground(m.theme.Overlay)
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(m.theme.Mauve).
+		Padding(0, 2).
+		Width(m.width - 4)
 
 	var lines []string
-	lines = append(lines, padStyle.Render(divider.Render(strings.Repeat("\u2500", m.width-4))))
-
 	labelStyle := lipgloss.NewStyle().Foreground(m.theme.Sky).Bold(true)
 	valueStyle := lipgloss.NewStyle().Foreground(m.theme.Text)
 	dimStyle := lipgloss.NewStyle().Foreground(m.theme.Subtext)
@@ -714,20 +904,16 @@ func (m PipelineModel) renderPreview() string {
 	// Check report cache
 	if summary, ok := m.reportCache[app.ReportPath]; ok {
 		if summary.archetype != "" {
-			lines = append(lines, padStyle.Render(
-				labelStyle.Render("Arquetipo: ")+valueStyle.Render(summary.archetype)))
+			lines = append(lines, labelStyle.Render("Arquetipo: ")+valueStyle.Render(summary.archetype))
 		}
 		if summary.tldr != "" {
-			lines = append(lines, padStyle.Render(
-				labelStyle.Render("TL;DR: ")+valueStyle.Render(summary.tldr)))
+			lines = append(lines, labelStyle.Render("TL;DR: ")+valueStyle.Render(summary.tldr))
 		}
 		if summary.comp != "" {
-			lines = append(lines, padStyle.Render(
-				labelStyle.Render("Comp: ")+valueStyle.Render(summary.comp)))
+			lines = append(lines, labelStyle.Render("Comp: ")+valueStyle.Render(summary.comp))
 		}
 		if summary.remote != "" {
-			lines = append(lines, padStyle.Render(
-				labelStyle.Render("Remote: ")+valueStyle.Render(summary.remote)))
+			lines = append(lines, labelStyle.Render("Remote: ")+valueStyle.Render(summary.remote))
 		}
 	} else if app.Notes != "" {
 		// Fallback: show notes
@@ -735,12 +921,35 @@ func (m PipelineModel) renderPreview() string {
 		if len(notes) > m.width-10 {
 			notes = notes[:m.width-13] + "..."
 		}
-		lines = append(lines, padStyle.Render(dimStyle.Render(notes)))
+		lines = append(lines, dimStyle.Render(notes))
 	} else {
-		lines = append(lines, padStyle.Render(dimStyle.Render("Loading preview...")))
+		lines = append(lines, dimStyle.Render("Loading preview..."))
 	}
 
-	return strings.Join(lines, "\n")
+	return lipgloss.NewStyle().Padding(0, 1).Render(boxStyle.Render(strings.Join(lines, "\n")))
+}
+
+func (m PipelineModel) renderCommands() string {
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(m.theme.Overlay).
+		Width(m.width - 2).
+		Padding(0, 1)
+
+	cmdStyle := lipgloss.NewStyle().Foreground(m.theme.Green).Bold(true)
+	descStyle := lipgloss.NewStyle().Foreground(m.theme.Subtext)
+
+	row1 := cmdStyle.Render("/careerforge:pipeline") + descStyle.Render(" (process inbox)  ") +
+		cmdStyle.Render("/careerforge:evaluate") + descStyle.Render(" (score JD)  ") +
+		cmdStyle.Render("/careerforge:pdf") + descStyle.Render(" (gen CV)")
+	row2 := cmdStyle.Render("/careerforge:apply") + descStyle.Render(" (fill form)  ") +
+		cmdStyle.Render("/careerforge:scan") + descStyle.Render(" (find jobs)  ") +
+		cmdStyle.Render("/careerforge:compare") + descStyle.Render(" (compare offers)")
+	row3 := cmdStyle.Render("/careerforge:outreach") + descStyle.Render(" (linkedin)  ") +
+		cmdStyle.Render("/careerforge:deep") + descStyle.Render(" (research)  ") +
+		cmdStyle.Render("/careerforge:batch") + descStyle.Render(" (batch)")
+
+	return lipgloss.NewStyle().Padding(0, 1).Render(boxStyle.Render(lipgloss.JoinVertical(lipgloss.Left, row1, row2, row3)))
 }
 
 func (m PipelineModel) renderHelp() string {
@@ -760,7 +969,7 @@ func (m PipelineModel) renderHelp() string {
 				keyStyle.Render("Esc") + descStyle.Render(" cancel"))
 	}
 
-	brand := lipgloss.NewStyle().Foreground(m.theme.Overlay).Render("career-ops by santifer.io")
+	brand := lipgloss.NewStyle().Foreground(m.theme.Overlay).Render("CareerForge Pipeline")
 
 	keys := keyStyle.Render("↑↓") + descStyle.Render(" nav  ") +
 		keyStyle.Render("←→") + descStyle.Render(" tabs  ") +

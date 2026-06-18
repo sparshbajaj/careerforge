@@ -1,0 +1,13 @@
+# OS
+.DS_Store
+*.mov
+*.mp4
+
+# Generated
+.resolved-prompt-*
+node_modules/
+
+# Gemini CLI local
+.gemini/settings.local.json
+.gemini/memory/
+career-dashboard

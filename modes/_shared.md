@@ -7,7 +7,7 @@
      Before using career-ops, you MUST:
      1. Fill in config/profile.yml with your personal data
      2. Create your cv.md in the project root
-     3. (Optional) Create article-digest.md with your proof points
+     3. Create article-digest.md with your proof points
      4. Customize the sections below marked with [CUSTOMIZE]
      ============================================================ -->
 
@@ -16,7 +16,7 @@
 | File | Path | When |
 |------|------|------|
 | cv.md | `cv.md` (project root) | ALWAYS |
-| article-digest.md | `article-digest.md` (if exists) | ALWAYS (detailed proof points) |
+| article-digest.md | `article-digest.md` | ALWAYS (detailed proof points) |
 | profile.yml | `config/profile.yml` | ALWAYS (candidate identity and targets) |
 
 **RULE: NEVER hardcode metrics from proof points.** Read them from cv.md + article-digest.md at evaluation time.
@@ -30,16 +30,19 @@
 
 ### Check Sequence (run automatically, do NOT prompt user)
 
-1. **Read `cv.md`** — If it exists, load it silently. If missing, enter Onboarding Mode.
-2. **Read `config/profile.yml`** — If it exists, load candidate identity. If missing, copy from `config/profile.example.yml` and ask user to fill in details.
-3. **Read `portals.yml`** — If it exists, load it. If missing, copy from `templates/portals.example.yml`.
-4. **Read `data/applications.md`** — If it exists, load tracker. If missing, create with standard header.
-5. **Run `node cv-sync-check.mjs`** — If it reports warnings, notify the candidate before continuing.
+1. **Read `cv.md` via shell (`Get-Content`)** — Load it silently. (Do NOT use `read_file` as it respects `.gitignore` and will fail).
+2. **Read `article-digest.md` via shell (`Get-Content`)** — Load it silently.
+3. **Read `config/profile.yml` via shell** — If it exists, load candidate identity. If missing, copy from `config/profile.example.yml` and ask user to fill in details.
+4. **Read `portals.yml` via shell** — If it exists, load it. If missing, copy from `templates/portals.example.yml`.
+5. **Read `data/applications.md` via shell** — If it exists, load tracker. If missing, create with standard header.
+6. **Read `data/feedback-loop.md` via shell** — Load past learnings and recruiter feedback to improve current evaluations.
+7. **Run `node cv-sync-check.mjs`** — If it reports warnings, notify the candidate before continuing.
 
 ### Behavior Rules
 
 - **NEVER ask the user to provide cv.md or profile.yml if they already exist.** Just read them.
 - **NEVER say "I need your CV"** if cv.md is present in the project root.
+- **If `cv.md` or `article-digest.md` are missing, stop and report the error without asking the user for files.**
 - **Load these files at the start of every session** — do not wait until an evaluation is requested.
 - **Cache in context**: Once loaded, keep cv.md and profile.yml contents in your working context for the entire session.
 - **If files change mid-session**: Re-read when the user says "I updated my CV" or similar.
@@ -48,33 +51,16 @@
 
 ## North Star -- Target Roles
 
-The skill applies with EQUAL rigor to ALL target roles. None is primary or secondary -- any is a success if compensation and growth are right:
-
-| Archetype | Thematic axes | What they buy |
-|-----------|---------------|---------------|
-| **AI Platform / LLMOps Engineer** | Evaluation, observability, reliability, pipelines | Someone who puts AI in production with metrics |
-| **Agentic Workflows / Automation** | HITL, tooling, orchestration, multi-agent | Someone who builds reliable agent systems |
-| **Technical AI Product Manager** | GenAI/Agents, PRDs, discovery, delivery | Someone who translates business to AI product |
-| **AI Solutions Architect** | Hyperautomation, enterprise, integrations | Someone who designs end-to-end AI architectures |
-| **AI Forward Deployed Engineer** | Client-facing, fast delivery, prototyping | Someone who delivers AI solutions to clients fast |
-| **AI Transformation Lead** | Change management, adoption, org enablement | Someone who leads AI transformation in an org |
-| **AI/UX Designer / Product Builder** | Intelligent Agents, Conversational Design, Prototyping in code | Someone who bridges design and engineering for AI |
-
-<!-- [CUSTOMIZE] Edit the archetypes above to match YOUR target roles. -->
+The skill applies with EQUAL rigor to ALL target roles listed in `config/profile.yml`. None is primary or secondary -- any is a success if compensation and growth are right.
 
 ### Adaptive Framing by Archetype
 
-> **Concrete metrics: read from `cv.md` + `article-digest.md` at evaluation time. NEVER hardcode numbers here.**
+> **Concrete metrics: read from `cv.md` + `article-digest.md` (and dynamically fetched GitHub repos if technical) at evaluation time. NEVER hardcode numbers here.**
 
-| If the role is... | Emphasize about the candidate... | Proof point sources |
-|-------------------|----------------------------------|---------------------|
-| Platform / LLMOps | Production systems builder, observability, evals, closed-loop | article-digest.md + cv.md |
-| Agentic / Automation | Multi-agent orchestration, HITL, reliability, cost | article-digest.md + cv.md |
-| Technical AI PM | Product discovery, PRDs, metrics, stakeholder mgmt | cv.md + article-digest.md |
-| Solutions Architect | System design, integrations, enterprise-ready | article-digest.md + cv.md |
-| Forward Deployed Engineer | Fast delivery, client-facing, prototype to prod | cv.md + article-digest.md |
-| AI Transformation Lead | Change management, team enablement, adoption | cv.md + article-digest.md |
-| AI/UX Designer | Intelligent Agents, multi-turn interaction patterns, technical feasibility | cv.md + article-digest.md |
+Adapt your framing to match the candidate's strategic positioning:
+1.  Read `config/profile.yml -> target_roles` to understand the primary and secondary goals.
+2.  Read `config/profile.yml -> strategy.priority_dimensions` to understand what dimensions to highlight.
+3.  Read `config/profile.yml -> strategy.positioning.preferred_archetypes` to understand the preferred narrative.
 
 ### Exit Narrative (use in ALL framings)
 
@@ -86,12 +72,10 @@ Use the candidate's exit story from `config/profile.yml` to frame ALL content:
 
 ### Cross-cutting Advantage
 
-Frame profile as **"Technical builder with real-world proof"** that adapts framing to the role:
-- For PM: "builder who reduces uncertainty with prototypes then productionizes with discipline"
-- For Designer: "builder who ensures technical feasibility by prototyping with code and Figma API automation"
-- For Engineer: "builder who delivers fast with observability and metrics from day 1"
+Read the candidate's cross-cutting advantage from `config/profile.yml -> strategy.positioning.cross_cutting_advantage`.
+Frame the profile using this advantage, adapting it to the specific role context.
 
-Convert "builder" into a professional signal, not a "hobby maker". Real proof points make this credible.
+Convert the advantage into a professional signal with real proof points.
 
 ### Portfolio as Proof Point (use in high-value applications)
 
@@ -149,9 +133,9 @@ If the candidate has a live demo/dashboard (check profile.yml), offer access in 
 ### ALWAYS
 
 0. **Mandatory Environment Check:** Silently verify `cv.md`, `config/profile.yml`, `portals.yml`, and `data/applications.md` exist at session start. Do NOT ask the user — just read them.
-1. Read cv.md and article-digest.md (if exists) before evaluating any offer
+1. Read cv.md and article-digest.md before evaluating any offer
 1b. **First evaluation of each session:** Run `node cv-sync-check.mjs` with shell. If it reports warnings, notify the candidate before continuing.
-2. Detect the role archetype and adapt framing (favor "Product Builder" / "UI/UX Engineer" for Sparsh).
+2. Detect the role archetype and adapt framing based on config/profile.yml strategy.positioning.
 3. Cite exact lines from CV when matching.
 4. Use WebSearch for compensation and company data.
 5. Register in tracker after evaluating.

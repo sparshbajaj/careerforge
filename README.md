@@ -1,182 +1,122 @@
-# Career-Ops Gemini
+# 🚀 Career-Ops: Your AI Job Search Engine
 
-AI-powered job search pipeline built on [Google Gemini CLI](https://github.com/google-gemini/gemini-cli). Evaluate offers, generate tailored CVs, scan portals, fill applications, and track everything — powered by AI agents with real browser automation.
+Welcome to **Career-Ops**! If you're tired of manually tweaking your resume for every job, tracking applications in a messy spreadsheet, and wondering why you aren't hearing back—you're in the right place.
 
-[![Gemini CLI](https://img.shields.io/badge/Gemini_CLI-4285F4?style=flat&logo=google&logoColor=white)](https://github.com/google-gemini/gemini-cli)
-[![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org)
-[![Go](https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white)](https://go.dev)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+Career-Ops is an automated, AI-powered system built on the **Antigravity CLI (`agy`)**. It completely automates the tedious parts of applying for jobs so you can focus on interviewing.
 
-> **Fork of [santifer/career-ops](https://github.com/santifer/career-ops)** — originally built on Claude Code by [Santiago Fernández de Valderrama](https://santifer.io). This fork migrates the agent layer to Gemini CLI’s `.toml` command architecture, 1M token context, and native `web-search`/`web-fetch` tools.
+It doesn't matter if you are a Software Engineer, a UX Designer, or a Sales Executive. Career-Ops is **role-agnostic** and learns about your specific career as you use it.
 
 ---
 
-## What It Does
+## ✨ What exactly does it do?
 
-Career-Ops turns Gemini CLI into a job search command center. Instead of manually tracking applications in a spreadsheet, you get an AI pipeline that:
+Instead of spending an hour tailoring a resume, you just give Career-Ops a job link. In under a minute, the system will:
 
-- **Evaluates offers** with a structured A–F scoring system across 10 weighted dimensions
-- **Generates tailored PDFs** — ATS-optimized CVs customized per job description
-- **Scans portals** automatically (Greenhouse, Ashby, Lever, company career pages)
-- **Fills application forms** using Chrome DevTools MCP for real browser interaction
-- **Processes in batch** — evaluate 10+ offers in parallel with sub-agents
-- **Tracks everything** in a single source of truth with automated integrity checks
+1. **Evaluate the Job:** It reads the job description and scores how well you match it (from A to F).
+2. **Rewrite your CV:** It grabs your master resume (`cv.md`) and rewrites the bullet points to perfectly mirror the vocabulary of the job description.
+3. **Generate a PDF:** It instantly generates a beautiful, ATS-optimized, 1-page PDF of your tailored CV.
+4. **Track the Application:** It automatically adds the job to your `applications.md` pipeline tracker.
+5. **Learn About You:** It logs what worked into a "Knowledge Base" so your future applications get even stronger.
 
-> **This is NOT a spray-and-pray tool.** The scoring system helps you focus on high-fit opportunities. Always review before submitting.
+> ⚠️ **Important Rule:** This system is built for **Quality over Quantity**. It will never "spray and pray" or submit an application without your permission. It stops right before the "Submit" button so you always have the final say.
 
-## Features
+---
 
-| Feature | Description |
-|---------|-------------|
-| **Auto-Pipeline** | Paste a URL → full evaluation + tailored PDF + tracker entry |
-| **6-Block Evaluation** | Role summary, CV match, level strategy, comp research, personalization, interview prep |
-| **Story Bank** | Accumulates STAR+R stories across evaluations for interview prep |
-| **ATS PDF Generation** | Keyword-injected CVs built from an HTML template |
-| **Browser Automation** | Chrome DevTools MCP for portal scanning, form filling, and verification |
-| **Portal Scanner** | 45+ companies pre-configured + custom queries across major job boards |
-| **Batch Processing** | Parallel evaluation with `gemini --yolo` workers |
-| **Dashboard TUI** | Go-based terminal UI to browse, filter, and sort your pipeline |
-| **Web Dashboard** | Browser-based pipeline viewer at `localhost:8080` |
-| **Pipeline Integrity** | Automated merge, dedup, status normalization, and health checks |
+## 🛠️ First-Time Setup (Getting Started)
 
-## Quick Start
+Don't worry, setting this up is completely automated!
 
+### 1. Prerequisites
+Make sure you have installed:
+- **Node.js** (for PDF generation and Antigravity CLI)
+- **Go** (for the Dashboard TUI)
+
+### 2. 1-Click Installation
+Open your terminal, clone the repo, and run the initializer script!
+
+**For Windows:**
 ```bash
-# 1. Clone and install
 git clone https://github.com/sparshbajaj/career-ops-gemini.git
 cd career-ops-gemini
-npm install
-
-# 2. Install Gemini CLI
-npm install -g @google/gemini-cli
-
-# 3. Configure your profile
-cp config/profile.example.yml config/profile.yml   # Edit with your details
-cp templates/portals.example.yml portals.yml        # Customize target companies
-
-# 4. Add your CV
-# Create cv.md in the project root with your CV in markdown format
-
-# 5. Launch
-gemini
+./init.bat
 ```
 
-Then paste a job URL or use any command:
-
-```
-/career-ops:auto-pipeline {JD or URL}   → Full pipeline (evaluate + PDF + tracker)
-/career-ops:evaluate                    → A–F evaluation of a single offer
-/career-ops:compare                     → Side-by-side comparison of 3–5 offers
-/career-ops:scan                        → Scan portals for new offers
-/career-ops:pdf                         → Generate ATS-optimized CV
-/career-ops:apply                       → Fill application forms with AI
-/career-ops:batch                       → Batch evaluate multiple offers
-/career-ops:tracker                     → View application status
-/career-ops:pipeline                    → Process pending URLs
-/career-ops:deep                        → Deep company research (6 axes)
-/career-ops:outreach                    → LinkedIn outreach messages
-/career-ops:training                    → Evaluate a course/certification
-/career-ops:project                     → Evaluate a portfolio project idea
+**For Mac & Linux:**
+```bash
+git clone https://github.com/sparshbajaj/career-ops-gemini.git
+cd career-ops-gemini
+bash init.sh
 ```
 
-Or just paste a job URL directly — career-ops auto-detects it and runs the full pipeline.
+**What the init script does:**
+1. Verifies your Go and Node.js installations.
+2. Automatically installs the Antigravity CLI (`agy`) if you don't have it.
+3. Installs all project dependencies.
+4. Builds the Go dashboard.
+5. Automatically launches the Split-Terminal Studio for you!
 
-## How It Works
+### 3. Smart Onboarding Mode
+If this is your first time running the project, the system will detect that you haven't set up your profile yet. 
 
-```
-Paste a job URL or description
-        │
-        ▼
-┌──────────────────┐
-│  Archetype       │  Classifies role type and seniority
-│  Detection       │
-└────────┬─────────┘
-         │
-┌────────▼─────────┐
-│  A–F Evaluation   │  Match analysis, gaps, comp research, STAR stories
-│  (reads cv.md)    │
-└────────┬─────────┘
-         │
-    ┌────┼────┐
-    ▼    ▼    ▼
- Report  PDF  Tracker
-  .md   .pdf   .tsv
-```
+The Dashboard will automatically boot into **🤖 SMART ONBOARDING MODE**. Simply follow the on-screen instructions:
+1. Drop your resume, notes, or LinkedIn PDF into the `context/` folder.
+2. Tell the AI in the right pane to "Generate my profile".
+3. The AI will do all the heavy lifting to build your `cv.md` and `config/profile.yml`. 
+4. The dashboard will instantly detect when it's done and automatically transition you to the main Kanban board!
 
-## Browser Automation
+---
 
-Career-Ops supports browser automation for portal scanning and form-filling via Playwright:
+## 🖥️ The Split-Terminal Dashboard (How to Use It Daily)
 
-- **Scanning** — Navigate SPAs, click through pagination, extract job listings
-- **Applications** — Read form fields, generate tailored answers, fill forms (never auto-submits)
-- **Verification** — Load offer pages to confirm details
+CareerForge features a beautiful, real-time Terminal UI (TUI) that runs side-by-side with the Antigravity AI. 
 
-## Pre-configured Portals
+To launch your workspace:
+- **Windows Users:** Run `./launch.bat` (or `./launch.ps1`). This automatically pops open a native Split-Pane Windows Terminal.
+- **Mac & Linux Users:** Run `./launch.sh`. This automatically builds a split-pane environment using `tmux` (make sure you have it installed via `brew install tmux` or `apt install tmux`).
 
-The scanner includes **45+ companies** and **19 search queries** across major job boards. Copy and customize:
+Regardless of your OS, you'll get a beautiful dual-pane setup:
+- **Left Pane:** The CareerForge Kanban Dashboard (tracking all your applications live).
+- **Right Pane:** The Antigravity AI (`agy`) waiting for your commands.
 
-| Category | Companies |
-|----------|-----------|
-| **AI Labs** | Anthropic, OpenAI, Mistral, Cohere, LangChain, Pinecone |
-| **Voice AI** | ElevenLabs, PolyAI, Parloa, Hume AI, Deepgram, Vapi |
-| **AI Platforms** | Retool, Airtable, Vercel, Temporal, Glean, Arize AI |
-| **Contact Center** | Ada, LivePerson, Sierra, Decagon, Talkdesk, Genesys |
-| **Enterprise** | Salesforce, Twilio, Gong, Dialpad |
-| **Automation** | n8n, Zapier, Make.com |
-| **Job Boards** | Ashby, Greenhouse, Lever, Wellfound, Workable, RemoteFront |
+### Adding a Permanent Windows Terminal Profile
+If you want a 1-click button inside Windows Terminal to launch your entire setup:
+1. Open Windows Terminal Settings (`Ctrl + ,`).
+2. Click the gear icon (bottom left) to open `settings.json`.
+3. Add this profile to your `"profiles": { "list": [ ... ] }` array:
 
-## Project Structure
-
-```
-career-ops-gemini/
-├── GEMINI.md                    # Agent system instructions
-├── .gemini/commands/career-ops/ # 14 .toml command definitions
-├── modes/                       # 14 skill modes
-│   ├── _shared.md               # Shared context & archetypes
-│   ├── evaluate.md              # A–F evaluation
-│   ├── compare.md               # Offer comparison matrix
-│   ├── outreach.md              # LinkedIn outreach
-│   ├── scan.md                  # Portal scanner
-│   ├── apply.md                 # Application assistant
-│   ├── batch.md                 # Batch processing
-│   └── ...                      # pdf, deep, pipeline, etc.
-├── config/
-│   └── profile.example.yml      # Profile template
-├── templates/
-│   ├── cv-template.html         # ATS CV template
-│   ├── portals.example.yml      # Scanner config template
-│   └── states.yml               # Canonical application statuses
-├── batch/
-│   ├── batch-prompt.md          # Worker prompt
-│   └── batch-runner.sh          # Batch orchestrator
-├── dashboard/                   # Go TUI pipeline viewer
-├── webui/                       # Go web dashboard (port 8080)
-├── examples/                    # Sample CV, report, article digest
-├── docs/                        # Setup, architecture, customization
-└── fonts/                       # PDF typography
+```json
+{
+    "guid": "{a5b8f0d3-3c9f-4f2a-b6e1-9d2c1b4a5f6e}",
+    "name": "CareerForge Studio",
+    "commandline": "cmd.exe /c \"D:\\Development\\Projects\\career-ops-gemini\\launch.bat\"",
+    "startingDirectory": "D:\\Development\\Projects\\career-ops-gemini",
+    "icon": "🤖"
+}
 ```
 
-## Tech Stack
+### The Workflow
+1. Find a job you like online.
+2. In the right pane (AI), run `/careerforge:auto-pipeline https://link-to-job.com`. 
+3. Watch the AI evaluate the job and generate your tailored CV. The Kanban board will automatically detect the changes, refresh itself, and instantly pop your new job into the `Evaluated` column!
 
-| Layer | Technology |
-|-------|------------|
-| **Agent** | [Gemini CLI](https://github.com/google-gemini/gemini-cli) with `.toml` custom commands |
-| **Browser** | Playwright for PDF generation and portal scanning |
-| **PDF** | Playwright + HTML template |
-| **Search** | Gemini native `web-search` / `web-fetch` + Greenhouse API |
-| **Dashboard** | Go + Bubble Tea + Lipgloss (Catppuccin Mocha) |
-| **Data** | Markdown tables, YAML config, TSV batch files |
+---
 
-## Documentation
+## 📚 All Available Commands
 
-- [Setup Guide](docs/SETUP.md) — Installation and configuration
-- [Architecture](docs/ARCHITECTURE.md) — How the system works
-- [Customization](docs/CUSTOMIZATION.md) — Adapting modes, archetypes, and scoring
+You can run these commands by typing them directly into your right-hand `agy` terminal pane.
 
-## Acknowledgments
+> 💡 **Note on Autocomplete:** Antigravity CLI does not currently display custom project commands in its `/` popup menu. However, the AI reads your project configuration and understands these commands perfectly! You can simply type them out (e.g., `/careerforge:evaluate https...`) or just use natural language (e.g., *"Evaluate this job: https..."*) and the AI will execute the correct workflow.
 
-This project is a fork of [santifer/career-ops](https://github.com/santifer/career-ops). All credit for the original system design, scoring logic, evaluation framework, and pipeline architecture goes to [Santiago Fernández de Valderrama](https://santifer.io). Read his [case study](https://santifer.io/career-ops-system) on how he used the original system to evaluate 740+ offers and land a Head of Applied AI role.
+| Command | What it does |
+|---------|-------------|
+| `/careerforge:pipeline` | Process all pending URLs in your inbox |
+| `/careerforge:evaluate` | Evaluate a specific job offer |
+| `/careerforge:pdf` | Generate the tailored PDF for a job |
+| `/careerforge:apply` | Launch the browser to automatically fill out an application form |
+| `/careerforge:scan` | Automatically scan internet job boards for new roles |
+| `/careerforge:compare` | Compare multiple offers to find the best fit |
+| `/careerforge:outreach` | Draft a highly personalized LinkedIn message to the hiring manager |
+| `/careerforge:deep` | Do a deep-dive research report on a company |
+| `/careerforge:batch` | Run a bulk batch-processing operation |
 
-## License
-
-MIT
+Happy job hunting! 🎯

@@ -65,3 +65,25 @@ location:
   visa_status: "No sponsorship needed"
   # For remote roles outside your country:
   # onsite_availability: "1 week/month in any city"
+
+strategy:
+  priority_dimensions:
+    - name: "Core Technical Proficiency"
+      description: "Highlight specific technical skills that differentiate you"
+      keywords: ["distributed systems", "system design"]
+    - name: "Domain Expertise"
+      description: "Industry-specific knowledge and experience"
+      keywords: ["fintech", "healthcare"]
+
+  positioning:
+    tagline: "Full-Stack Engineer bridging backend and DevOps"
+    cross_cutting_advantage: "builder who automates CI/CD and writes production Go"
+    preferred_archetypes: ["Backend Engineer", "Platform Engineer"]
+
+  keyword_rules:
+    - trigger: "AI"
+      inject: ["ML Pipeline", "Model Evaluation"]
+
+  lessons:
+    - "Frame project X as 'distributed data pipeline' for infrastructure roles"
+    - "Lead with project Y for AI-first companies"

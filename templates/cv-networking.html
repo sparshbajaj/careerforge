@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{NAME}} - CV (Networking)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Inter', Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+    line-height: 1.5;
+    color: #1a1a2e;
+    background: #ffffff;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 65mm 1fr;
+    background: #ffffff;
+  }
+
+  /* === SIDEBAR === */
+  .sidebar {
+    background: #f8fafc;
+    padding: 15mm 10mm;
+    border-right: 1px solid #e2e8f0;
+  }
+
+  /* === MAIN CONTENT === */
+  .main-content {
+    padding: 15mm;
+  }
+
+  /* === HEADER (In Sidebar or Main depending on design, here we put it at top of main or sidebar) === */
+  header h1 {
+    font-size: 20pt;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1.1;
+    margin-bottom: 2mm;
+  }
+
+  .tagline {
+    font-size: 11pt;
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 6mm;
+  }
+
+  .contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5mm;
+    font-size: 9.5pt;
+    color: #475569;
+    margin-bottom: 8mm;
+  }
+
+  .contact-list a {
+    color: #475569;
+    text-decoration: none;
+  }
+
+  /* === SECTIONS === */
+  section {
+    margin-bottom: 6mm;
+    break-inside: avoid;
+  }
+
+  section h2 {
+    font-size: 12pt;
+    font-weight: 700;
+    color: #475569;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 1mm;
+    margin-bottom: 3mm;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* === PROFESSIONAL SUMMARY === */
+  .summary-text {
+    font-size: 10pt;
+    line-height: 1.6;
+  }
+
+  /* === SKILLS === */
+  .skills-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5mm;
+  }
+  
+  .skill-item {
+    font-size: 9.5pt;
+  }
+
+  .skill-category {
+    font-weight: 600;
+    color: #475569;
+    display: block;
+    margin-bottom: 0.5mm;
+  }
+
+  /* === WORK EXPERIENCE === */
+  .job {
+    margin-bottom: 5mm;
+    break-inside: avoid;
+  }
+
+  .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5mm;
+  }
+
+  .job-company-role {
+    font-weight: 600;
+    font-size: 10.5pt;
+    color: #1a1a2e;
+  }
+
+  .job-period-location {
+    font-size: 9.5pt;
+    color: #475569;
+    white-space: nowrap;
+  }
+
+  .job ul {
+    padding-left: 4mm;
+    margin-top: 1.5mm;
+  }
+
+  .job li {
+    font-size: 10pt;
+    line-height: 1.5;
+    margin-bottom: 1mm;
+  }
+
+  .job li strong {
+    font-weight: 600;
+    color: #475569;
+  }
+
+  /* === PROJECTS === */
+  .project {
+    margin-bottom: 3.5mm;
+    break-inside: avoid;
+  }
+
+  .project-title {
+    font-size: 10pt;
+    font-weight: 600;
+  }
+
+  .project-desc {
+    font-size: 9.5pt;
+    margin-top: 0.5mm;
+  }
+
+  .project-tech {
+    font-size: 8.5pt;
+    color: #475569;
+    margin-top: 0.5mm;
+  }
+
+  /* === EDUCATION & CERTS === */
+  .edu-item, .cert-item {
+    margin-bottom: 3mm;
+    break-inside: avoid;
+  }
+
+  .edu-title, .cert-title {
+    font-weight: 600;
+    font-size: 9.5pt;
+    display: block;
+  }
+
+  .edu-org, .cert-org {
+    color: #1a1a2e;
+    font-size: 9.5pt;
+  }
+
+  .edu-year, .cert-year {
+    font-size: 9pt;
+    color: #475569;
+    display: block;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <header>
+      <h1>{{NAME}}</h1>
+      <div class="tagline">{{TAGLINE}}</div>
+    </header>
+
+    <div class="contact-list">
+      <span>{{EMAIL}}</span>
+      <span>{{PHONE}}</span>
+      <a href="{{LINKEDIN_URL}}">{{LINKEDIN_DISPLAY}}</a>
+      <a href="{{PORTFOLIO_URL}}">{{PORTFOLIO_DISPLAY}}</a>
+      <span>{{LOCATION}}</span>
+    </div>
+
+    <section>
+      <h2>{{SECTION_SKILLS}}</h2>
+      {{SKILLS}}
+    </section>
+
+    <section>
+      <h2>{{SECTION_EDUCATION}}</h2>
+      {{EDUCATION}}
+    </section>
+
+    <section>
+      <h2>{{SECTION_CERTIFICATIONS}}</h2>
+      {{CERTIFICATIONS}}
+    </section>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <section>
+      <h2>{{SECTION_SUMMARY}}</h2>
+      <div class="summary-text">{{SUMMARY_TEXT}}</div>
+    </section>
+
+    <section>
+      <h2>{{SECTION_EXPERIENCE}}</h2>
+      {{EXPERIENCE}}
+    </section>
+
+    <section>
+      <h2>{{SECTION_PROJECTS}}</h2>
+      {{PROJECTS}}
+    </section>
+  </main>
+
+</div>
+</body>
+</html>

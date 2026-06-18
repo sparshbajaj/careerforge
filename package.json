@@ -1,22 +1,29 @@
 {
-  "name": "career-ops",
+  "name": "careerforge",
   "version": "2.0.0",
-  "description": "AI-powered job search pipeline built on Gemini CLI",
+  "description": "AI-powered job search pipeline built on Antigravity CLI",
   "scripts": {
-    "verify": "node verify-pipeline.mjs",
-    "normalize": "node normalize-statuses.mjs",
-    "dedup": "node dedup-tracker.mjs",
-    "merge": "node merge-tracker.mjs",
-    "pdf": "node generate-pdf.mjs",
-    "sync-check": "node cv-sync-check.mjs",
-    "dashboard": "cd webui && go run . --path .."
+    "preflight": "node scripts/cv-sync-check.mjs",
+    "verify": "node scripts/verify-pipeline.mjs",
+    "normalize": "node scripts/normalize-statuses.mjs",
+    "dedup": "node scripts/dedup-tracker.mjs",
+    "merge": "node scripts/merge-tracker.mjs",
+    "pdf": "node scripts/generate-pdf.mjs",
+    "pdf:dry-run": "node scripts/generate-pdf.mjs --dry-run",
+    "preview:html": "node scripts/preview-html.mjs",
+    "keyword:coverage": "node scripts/keyword-coverage.mjs",
+    "lint:cv": "node scripts/lint-cv.mjs",
+    "lint:digest": "node scripts/validate-article-digest.mjs",
+    "diff:cv": "node scripts/diff-cv.mjs",
+    "sync-check": "node scripts/cv-sync-check.mjs",
+    "test": "node --test"
   },
-  "keywords": ["ai", "job-search", "gemini-cli", "career", "automation"],
-  "author": "Santiago Fernández de Valderrama <hi@santifer.io> (https://santifer.io)",
-  "homepage": "https://santifer.io",
+  "keywords": ["ai", "job-search", "antigravity-cli", "career", "automation"],
+  "author": "Sparsh Bajaj",
+  "homepage": "https://sparshbajaj.me",
   "repository": {
     "type": "git",
-    "url": "https://github.com/santifer/career-ops"
+    "url": "https://github.com/sparshbajaj/careerforge"
   },
   "license": "MIT",
   "dependencies": {

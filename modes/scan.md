@@ -11,8 +11,8 @@ Uses `portals.yml` for queries, filters, and company list.
 1. **Execute Search**: Use `web-search` or Chrome DevTools MCP to hit portals (LinkedIn, Indeed, Otta, company pages).
 2. **Scrape**: Extract titles, companies, and URLs.
 3. **Filter**:
-   - **Positive**: Keywords like "AI", "Agent", "Product Designer", "UX Engineer".
-   - **Negative**: Keywords like "Intern", "Junior", "Java", "PHP".
+   - **Positive**: Read from `portals.yml -> title_filter.positive`.
+   - **Negative**: Read from `portals.yml -> title_filter.negative`.
    - **History**: Skip URLs in `data/scan-history.tsv` or `data/applications.md`.
 4. **Save Results**: Append new valid URLs to `data/pipeline.md`.
 

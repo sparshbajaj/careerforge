@@ -14,13 +14,15 @@ Interactive mode for when the candidate is filling out an application form in Ch
 2. IDENTIFY  → Extract company + role from the page
 3. SEARCH    → Match against existing reports in reports/
 4. LOAD      → Read full report + Section G (if it exists)
-5. COMPARE   → Does the role on screen match the evaluated one? If changed → warn
-6. ANALYZE   → Identify ALL visible form questions
-7. GENERATE  → For each question, generate personalized answer
-8. PRESENT   → Show answers formatted for copy-paste
+5. MEMORY    → Check `data/portal-memory.yml` for saved navigation/form steps for this portal. If none, let AI navigate and then save the steps.
+6. COMPARE   → Does the role on screen match the evaluated one? If changed → warn
+7. ANALYZE   → Identify ALL visible form questions
+8. GENERATE  → For each question, generate personalized answer
+9. PRESENT   → Show answers formatted for copy-paste (or auto-fill if using MCP)
 ```
 
 ## Step 1 — Detect the offer
+
 
 **With Chrome DevTools MCP:** Use `take_snapshot` to read the active page. Extract title, URL, and visible content. Use `list_pages` to find the right tab if multiple are open.
 
@@ -53,6 +55,9 @@ Identify ALL visible questions:
 - Yes/No (relocation, visa, etc.)
 - Salary fields (range, expectation)
 - Upload fields (resume, cover letter PDF)
+- Summary fields
+
+**CRITICAL RULE:** ALWAYS fill the "Summary" and "Cover Letter" fields if they exist, even if marked as "(Optional)". Generate a concise, highly-targeted response for them based on the evaluation report.
 
 Classify each question:
 - **Already answered in Section G** → adapt existing answer

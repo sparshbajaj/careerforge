@@ -109,6 +109,25 @@ check_prerequisites() {
     exit 1
   fi
 
+  if [[ ! -f "$PROJECT_DIR/cv.md" ]]; then
+    echo "ERROR: cv.md not found in project root."
+    exit 1
+  fi
+
+  if [[ ! -f "$PROJECT_DIR/config/profile.yml" ]]; then
+    echo "ERROR: config/profile.yml not found. Copy from config/profile.example.yml and fill it in."
+    exit 1
+  fi
+
+  if [[ ! -f "$PROJECT_DIR/templates/cv-template.html" ]]; then
+    echo "ERROR: templates/cv-template.html not found."
+    exit 1
+  fi
+
+  if [[ ! -f "$PROJECT_DIR/article-digest.md" ]]; then
+    echo "WARN: article-digest.md not found. This is optional but recommended."
+  fi
+
   if ! command -v gemini &>/dev/null; then
     echo "ERROR: 'gemini' CLI not found in PATH. Install with: npm install -g @google/gemini-cli"
     exit 1

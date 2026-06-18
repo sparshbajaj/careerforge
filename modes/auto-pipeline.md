@@ -2,13 +2,19 @@
 
 When the user pastes a JD (text or URL) without an explicit sub-command, execute the ENTIRE pipeline in sequence:
 
-## Step 0 — Extract JD
+## Step 0 — Mandatory Market Research
+
+Before processing the JD or evaluating the offer, ALWAYS use the `web-search` tool to research:
+`"{detected_archetype}" resume cv trends {current_year} best practices`
+Analyze the latest trends for the target role's CVs (e.g., focus on business impact, technical depth, AI integration). Use this research to guide your entire evaluation and CV generation process.
+
+## Step 1 — Extract JD
 
 If the input is a **URL** (not pasted JD text), follow this strategy to extract the content:
 
 **Order of priority:**
 
-1. **Chrome DevTools MCP (preferred):** Most job portals (Lever, Ashby, Greenhouse, Workday) are SPAs. Use `navigate_page` + `take_snapshot` to render and read the JD.
+1. **Chrome DevTools MCP (preferred):** Most job portals (Lever, Ashby, Greenhouse, Workday) are SPAs. Use `navigate_page` + `take_snapshot` to render and read the JD. *Tip: Check `data/portal-memory.yml` for known selectors or steps.*
 2. **WebFetch (fallback):** For static pages (ZipRecruiter, WeLoveProduct, company career pages).
 3. **WebSearch (last resort):** Search role title + company in secondary portals that index the JD in static HTML.
 
@@ -65,3 +71,16 @@ If the final score is >= 4.5, generate draft answers for the application form:
 Register in `data/applications.md` with all columns including Report and PDF as ✅.
 
 **If any step fails**, continue with the next ones and mark the failed step as pending in the tracker.
+
+## Step 6 — Self-Reflection & Feedback Loop (Agentic)
+Analyze the application process you just completed. Did you discover a new way to frame a gap? Was there a recurring JD requirement that the candidate's CV struggles to address? Did the tone guidelines work well?
+- If you have a new actionable insight, append a 1-sentence lesson to `data/knowledge-base/outcome-log.md` using the shell so it improves future applications.
+
+## Step 7 — Update Knowledge Base
+
+After writing the report and tracker TSV:
+1. Read `data/knowledge-base/skills-matrix.yml`
+2. Extract all skill/keyword requirements from the JD
+3. Add new skills, increment frequencies for existing skills
+4. Append evaluation event to `data/knowledge-base/outcome-log.md`
+5. If this is every 5th evaluation, regenerate `data/knowledge-base/strategy-memo.md`

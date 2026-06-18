@@ -1,16 +1,8 @@
-# Career-Ops -- AI Job Search Pipeline
+# CareerForge -- AI Job Search Pipeline
 
-## Origin
+## What is CareerForge
 
-This system was built and used by [santifer](https://santifer.io) to evaluate 740+ job offers, generate 100+ tailored CVs, and land a Head of Applied AI role. The archetypes, scoring logic, negotiation scripts, and proof point structure all reflect his specific career search in AI/automation roles.
-
-The portfolio that goes with this system is also open source: [cv-santiago](https://github.com/santifer/cv-santiago).
-
-**It will work out of the box, but it's designed to be made yours.** If the archetypes don't match your career, the modes are in the wrong language, or the scoring doesn't fit your priorities -- just ask. You (Gemini) can edit any file in this system. The user says "change the archetypes to data engineering roles" and you do it. That's the whole point.
-
-## What is career-ops
-
-AI-powered job search automation built on Gemini CLI: pipeline tracking, offer evaluation, CV generation, portal scanning, batch processing.
+AI-powered job search automation built on Antigravity CLI: pipeline tracking, offer evaluation, CV generation, portal scanning, batch processing.
 
 ### Main Files
 
@@ -30,54 +22,51 @@ AI-powered job search automation built on Gemini CLI: pipeline tracking, offer e
 
 **Before performing any action (evaluations, scans, or mode execution), you MUST verify the environment is ready.** This check MUST be performed **silently and automatically** at the start of every session, new conversation, or when a new job URL is provided. **Do NOT ask the user if they have these files — read them directly.**
 
-1.  **Read `cv.md`**: Load it silently. This is the canonical source of truth.
-2.  **Read `config/profile.yml`**: Load candidate identity and targets.
-3.  **Read `portals.yml`**: Load search configuration.
-4.  **Read `data/applications.md`**: Load application tracker.
+1.  **Read `cv.md` using shell (`Get-Content` or `cat`)**: Load it silently. It is in `.gitignore` so `read_file` will fail. This is the canonical source of truth.
+2.  **Read `config/profile.yml` using shell**: Load candidate identity and targets.
+3.  **Read `portals.yml` using shell**: Load search configuration.
+4.  **Read `data/applications.md` using shell**: Load application tracker.
 
 **If any file is missing, enter Onboarding Mode immediately.** If they exist, proceed with the requested task. **Do NOT ask the user if they already have these files if the check passes. Do NOT prompt the user to share their CV if cv.md exists.**
 
-### Onboarding Steps (If missing)
+### Onboarding Steps (If missing files)
 
-#### Step 1: CV (Required)
-If `cv.md` is missing, ask:
-> "I don't have your CV yet. You can either:
-> 1. Paste your CV here and I'll convert it to markdown
-> 2. Paste your LinkedIn URL and I'll extract the key info
-> 3. Tell me about your experience and I'll draft a CV for you
->
-> Which do you prefer?"
+If `cv.md` or `config/profile.yml` are missing, trigger **Smart Onboarding Mode**:
 
-#### Step 2: Profile (Required)
-If `config/profile.yml` is missing, copy from `config/profile.example.yml` and then ask for missing details (Full name, email, target roles, salary range).
-
-#### Step 3: Portals (Recommended)
-If `portals.yml` is missing, copy from `templates/portals.example.yml`.
-
-#### Step 4: Tracker
-If `data/applications.md` is missing, create it with the standard header.
+1. **Read Context**: Scan the `context/` folder for any user-provided files (raw CV text, files with URLs, LinkedIn links, or notes).
+2. **Auto-Generate**: Use the provided context to automatically generate the `cv.md` and `config/profile.yml`. **DO NOT** make the user fill out the YAML manually if you have enough context to infer their name, email, and target roles.
+3. **Ask for Missing Context**: If the `context/` folder is empty or the provided context is insufficient to build a complete profile/CV, ask the user specific questions to fill in the gaps. Let them know they can drop files or links directly into the `context/` folder.
+4. **Save & Setup Portals**: Once you have a complete picture, save the `profile.yml` and `cv.md`. Also, copy `templates/portals.example.yml` to `portals.yml` and create `data/applications.md` with the standard header if they don't exist. Confirm onboarding is complete.
 
 ---
 
-### Command Modes
+## Candidate Specific Strategy (CRITICAL)
 
-Commands use Gemini CLI's `/group:command` syntax. Each maps to a `.toml` file in `.gemini/commands/career-ops/`.
+**Read the candidate's strategy from `config/profile.yml` and apply it to evaluations and CV generation.**
+Do not assume the candidate is a UX/Product Designer. Dynamically read their priority dimensions, positioning, and keyword rules from the strategy block.
+
+---
+
+## Command Modes
+
+
+Commands use Antigravity CLI's `/group:command` syntax. Each maps to a `.toml` file in `.agents/commands/careerforge/`.
 
 | If the user... | Command |
 |----------------|---------|
-| Pastes JD or URL | `/career-ops:auto-pipeline` (evaluate + report + PDF + tracker) |
-| Asks to evaluate offer | `/career-ops:evaluate` |
-| Asks to compare offers | `/career-ops:compare` |
-| Wants LinkedIn outreach | `/career-ops:outreach` |
-| Asks for company research | `/career-ops:deep` |
-| Wants to generate CV/PDF | `/career-ops:pdf` |
-| Evaluates a course/cert | `/career-ops:training` |
-| Evaluates portfolio project | `/career-ops:project` |
-| Asks about application status | `/career-ops:tracker` |
-| Fills out application form | `/career-ops:apply` |
-| Searches for new offers | `/career-ops:scan` |
-| Processes pending URLs | `/career-ops:pipeline` |
-| Batch processes offers | `/career-ops:batch` |
+| Pastes JD or URL | `/careerforge:auto-pipeline` (evaluate + report + PDF + tracker) |
+| Asks to evaluate offer | `/careerforge:evaluate` |
+| Asks to compare offers | `/careerforge:compare` |
+| Wants LinkedIn outreach | `/careerforge:outreach` |
+| Asks for company research | `/careerforge:deep` |
+| Wants to generate CV/PDF | `/careerforge:pdf` |
+| Evaluates a course/cert | `/careerforge:training` |
+| Evaluates portfolio project | `/careerforge:project` |
+| Asks about application status | `/careerforge:tracker` |
+| Fills out application form | `/careerforge:apply` |
+| Searches for new offers | `/careerforge:scan` |
+| Processes pending URLs | `/careerforge:pipeline` |
+| Batch processes offers | `/careerforge:batch` |
 
 ### CV Source of Truth
 
@@ -108,27 +97,27 @@ Commands use Gemini CLI's `/group:command` syntax. Each maps to a `.toml` file i
 
 **Fallback:** If Chrome DevTools MCP is unavailable, use `web-fetch` to check the URL.
 
-**For batch workers (`gemini --yolo`):** Use `web-fetch` and mark the report header with `**Verification:** unconfirmed (batch mode)` if uncertain. The user can verify manually later.
+**For batch workers (`agy --yolo`):** Use `web-fetch` and mark the report header with `**Verification:** unconfirmed (batch mode)` if uncertain. The user can verify manually later.
 
 ---
 
 ## Native Tool Optimization
 
-Gemini CLI provides built-in tools, and Chrome DevTools MCP adds real browser automation:
+Antigravity CLI provides built-in tools, and Chrome DevTools MCP adds real browser automation:
 
 | Tool | Use |
 |------|-----|
 | `web-search` | Comp research, trends, company culture, LinkedIn contacts, broad job discovery |
 | `web-fetch` | Extract JDs from URLs (static pages), verify offer status, read company pages |
 | Chrome DevTools MCP | Navigate portals, scan job listings, fill application forms, verify offers in a real Chrome browser (SPAs, JS-heavy pages) |
-| `shell` | Run Node.js scripts (`node generate-pdf.mjs`, `node merge-tracker.mjs`) |
+| `shell` | Run Node.js scripts (`node scripts/generate-pdf.mjs`, `node scripts/merge-tracker.mjs`) |
 | File I/O | Read cv.md, article-digest.md, cv-template.html; Write reports, tracker TSVs |
 
 **When to use Chrome DevTools MCP vs web-fetch:**
 - **Chrome DevTools MCP**: SPA career pages (Ashby, Lever, Workday), form filling, pages requiring JS rendering, offer verification
 - **web-fetch**: Static pages, APIs, quick URL checks, batch worker mode (no browser available)
 
-The Chrome DevTools MCP server is configured in `.mcp.json` and starts automatically when Gemini CLI calls a browser tool.
+The Chrome DevTools MCP server is configured in `.mcp.json` and starts automatically when Antigravity CLI calls a browser tool.
 
 ---
 
@@ -140,7 +129,7 @@ The Chrome DevTools MCP server is configured in `.mcp.json` and starts automatic
 - JDs in `jds/` (referenced as `local:jds/{file}` in pipeline.md)
 - Batch in `batch/` (gitignored except scripts and prompt)
 - Report numbering: sequential 3-digit zero-padded, max existing + 1
-- **RULE: After each batch of evaluations, run `node merge-tracker.mjs`** to merge tracker additions and avoid duplications.
+- **RULE: After each batch of evaluations, run `node scripts/merge-tracker.mjs`** to merge tracker additions and avoid duplications.
 - **RULE: NEVER create new entries in applications.md if company+role already exists.** Update the existing entry.
 
 ### TSV Format for Tracker Additions
@@ -170,9 +159,9 @@ Write one TSV file per evaluation to `batch/tracker-additions/{num}-{company-slu
 2. **YES you can edit applications.md to UPDATE status/notes of existing entries.**
 3. All reports MUST include `**URL:**` in the header (between Score and PDF).
 4. All statuses MUST be canonical (see `templates/states.yml`).
-5. Health check: `node verify-pipeline.mjs`
-6. Normalize statuses: `node normalize-statuses.mjs`
-7. Dedup: `node dedup-tracker.mjs`
+5. Health check: `node scripts/verify-pipeline.mjs`
+6. Normalize statuses: `node scripts/normalize-statuses.mjs`
+7. Dedup: `node scripts/dedup-tracker.mjs`
 
 ### Canonical States (applications.md)
 

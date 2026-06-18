@@ -8,8 +8,6 @@ All notable changes to this project will be documented in this file.
 - **`evaluate` command** — dedicated A–F evaluation mode for single offers
 - **`compare` command** — side-by-side weighted comparison matrix for 3–5 offers
 - **`outreach` command** — LinkedIn outreach messages with proof-point templates
-- **Web dashboard** (`webui/`) — browser-based pipeline viewer at `localhost:8080`
-- `npm run dashboard` script to launch the web UI
 
 ### Changed
 - Renamed Spanish commands to English: `contacto` → `outreach`, `oferta` → `evaluate`
